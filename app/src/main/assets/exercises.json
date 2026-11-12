@@ -1,0 +1,170 @@
+[
+  {
+    "code": "barbell-bench-press",
+    "name": "Barbell Bench Press",
+    "category": "Chest",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "incline-dumbbell-press",
+    "name": "Incline Dumbbell Press",
+    "category": "Chest",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "push-up",
+    "name": "Push-up",
+    "category": "Chest",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "cable-fly",
+    "name": "Cable Fly",
+    "category": "Chest",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "lat-pulldown",
+    "name": "Lat Pulldown",
+    "category": "Back",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "seated-cable-row",
+    "name": "Seated Cable Row",
+    "category": "Back",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "pull-up",
+    "name": "Pull-up",
+    "category": "Back",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "barbell-row",
+    "name": "Barbell Row",
+    "category": "Back",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "shoulder-press",
+    "name": "Shoulder Press",
+    "category": "Shoulders",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "lateral-raise",
+    "name": "Lateral Raise",
+    "category": "Shoulders",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "rear-delt-fly",
+    "name": "Rear Delt Fly",
+    "category": "Shoulders",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "barbell-curl",
+    "name": "Barbell Curl",
+    "category": "Biceps",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "hammer-curl",
+    "name": "Hammer Curl",
+    "category": "Biceps",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "triceps-pushdown",
+    "name": "Triceps Pushdown",
+    "category": "Triceps",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "overhead-triceps-extension",
+    "name": "Overhead Triceps Extension",
+    "category": "Triceps",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "barbell-squat",
+    "name": "Barbell Squat",
+    "category": "Legs",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "leg-press",
+    "name": "Leg Press",
+    "category": "Legs",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "leg-extension",
+    "name": "Leg Extension",
+    "category": "Legs",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "lying-leg-curl",
+    "name": "Lying Leg Curl",
+    "category": "Legs",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "romanian-deadlift",
+    "name": "Romanian Deadlift",
+    "category": "Legs",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "standing-calf-raise",
+    "name": "Standing Calf Raise",
+    "category": "Legs",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "plank",
+    "name": "Plank",
+    "category": "Core",
+    "measurementType": "DURATION",
+    "description": ""
+  },
+  {
+    "code": "crunch",
+    "name": "Crunch",
+    "category": "Core",
+    "measurementType": "REPS_WEIGHT",
+    "description": ""
+  },
+  {
+    "code": "stationary-bike",
+    "name": "Stationary Bike",
+    "category": "Cardio",
+    "measurementType": "DURATION",
+    "description": ""
+  }
+]

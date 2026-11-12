@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="16dp" android:orientation="vertical">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Exercise catalogue" android:textAppearance="?attr/textAppearanceHeadline5" />
+    <EditText android:id="@+id/search_input" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Search exercises"
+        android:inputType="text" android:singleLine="true" />
+    <Button android:id="@+id/add_exercise_button" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="@string/add_exercise" />
+    <TextView android:id="@+id/empty_state" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="No exercises found"
+        android:padding="16dp" android:visibility="gone" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/exercise_list"
+        android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

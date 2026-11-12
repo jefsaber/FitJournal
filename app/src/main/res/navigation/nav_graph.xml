@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph" app:startDestination="@id/exercisesFragment">
+    <fragment android:id="@+id/exercisesFragment"
+        android:name="com.fitjournal.app.features.exercises.ExercisesFragment"
+        android:label="Exercises"/>
+    <fragment android:id="@+id/exerciseFormFragment"
+        android:name="com.fitjournal.app.features.exercises.ExerciseFormFragment"
+        android:label="Edit exercise"/>
+    <fragment android:id="@+id/workoutsFragment"
+        android:name="com.fitjournal.app.features.workouts.WorkoutsFragment"
+        android:label="Workouts"/>
+    <fragment android:id="@+id/workoutFormFragment"
+        android:name="com.fitjournal.app.features.workouts.WorkoutFormFragment"
+        android:label="Edit workout"/>
+    <fragment android:id="@+id/workoutDetailsFragment"
+        android:name="com.fitjournal.app.features.entries.WorkoutDetailsFragment"
+        android:label="Workout details"/>
+    <fragment android:id="@+id/progressFragment"
+        android:name="com.fitjournal.app.features.progress.ProgressFragment"
+        android:label="Progress"/>
+    <fragment android:id="@+id/settingsFragment"
+        android:name="com.fitjournal.app.features.settings.SettingsFragment"
+        android:label="Settings"/>
+</navigation>
