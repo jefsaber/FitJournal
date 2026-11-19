@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -31,7 +32,12 @@ class ExercisesFragment : Fragment() {
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val adapter = ExercisePagingAdapter()
+        val adapter = ExercisePagingAdapter { exercise ->
+            findNavController().navigate(
+                R.id.exerciseFormFragment,
+                bundleOf(ExerciseFormViewModel.ARG_EXERCISE_ID to exercise.id)
+            )
+        }
         binding.exerciseList.layoutManager = LinearLayoutManager(requireContext())
         binding.exerciseList.adapter = adapter
         binding.addExerciseButton.setOnClickListener { findNavController().navigate(R.id.exerciseFormFragment) }

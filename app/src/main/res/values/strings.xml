@@ -6,4 +6,22 @@
     <string name="settings">Settings</string>
     <string name="add_exercise">Add exercise</string>
     <string name="add_workout">Add workout</string>
+    <string name="exercise_edit">Edit exercise</string>
+    <string name="exercise_name_label">Exercise name</string>
+    <string name="exercise_category_label">Muscle group / category</string>
+    <string name="exercise_description_label">Description (optional)</string>
+    <string name="exercise_tracking_label">Track this exercise by</string>
+    <string name="exercise_tracking_reps_weight">Repetitions and weight</string>
+    <string name="exercise_tracking_duration">Duration</string>
+    <string name="exercise_save">Save exercise</string>
+    <string name="exercise_cancel">Cancel</string>
+    <string name="exercise_retry">Retry</string>
+    <string name="exercise_working">Loading or saving exercise</string>
+    <string name="exercise_name_error">Enter a name between 2 and 80 characters.</string>
+    <string name="exercise_category_error">Enter a muscle group or category.</string>
+    <string name="exercise_tracking_error">Choose repetitions and weight or duration.</string>
+    <string name="exercise_load_error">Could not load this exercise. Please retry.</string>
+    <string name="exercise_not_found">This exercise no longer exists. Return to the catalogue.</string>
+    <string name="exercise_save_error">Could not save your exercise. Your changes are still here; please try again.</string>
+    <string name="exercise_edit_action">Edit %1$s</string>
 </resources>

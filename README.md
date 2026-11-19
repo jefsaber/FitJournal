@@ -4,12 +4,12 @@
 
 Deadline: **26 November 2026** · Group: **4 developers**
 
-> **Status: foundation scaffold**. Navigation, the database contracts, initial exercise catalogue, JSON import, and preferences repository are present. Workout CRUD forms, workout logging, charts, settings UI, and most tests are intentionally TODO for teammates. This is NOT the finished assignment.
+> **Status: exercise Add/Edit workflow implemented**. Navigation, database contracts, the initial exercise catalogue, JSON import, and the preferences repository are present. Exercises can now be created and edited with validation and draft restoration. Catalogue filter/sort controls, workout forms, workout logging, charts, and settings UI remain to be completed.
 
 ## Requirements / setup
 
 - Android Studio with SDK API 36 installed
-- JDK 17+ configured for Gradle
+- JDK 21 installed; Java and Kotlin target JVM 21 using `jvmToolchain(21)`
 - Gradle 8.13 / Android Gradle plugin 8.13.2
 - Android emulator / device API 26+
 
@@ -20,7 +20,7 @@ Deadline: **26 November 2026** · Group: **4 developers**
 3. Sync Gradle, then **Run > Run 'app'**.
 4. The first launch imports 24 exercises from `app/src/main/assets/exercises.json` and shows them in the **Exercises** catalogue. The import does not overwrite existing entries.
 
-> Build verification was not possible in the creation environment (Android SDK, Gradle and network are unavailable). The first teammate to open the project must run `./gradlew :app:assembleDebug` and fix any environment-specific problems before merging the foundation branch.
+> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 11 JUnit tests passed, and both Espresso tests passed on the API 37 emulator.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 ## Current screens (7 navigation destinations)
 
 1. Exercise catalogue — initial Paging 3 list + search (scaffold).
-2. Add/edit exercise — TODO developer 1.
+2. Add/edit exercise — implemented by Developer 1: validation, Room persistence, loading/error states, and draft restoration.
 3. Workout history — Flow-powered empty/list state (scaffold).
 4. Add/edit workout — TODO developer 2.
 5. Workout details/logging — TODO developer 3.
@@ -44,6 +44,32 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 7. Settings — TODO developer 4.
 
 Navigation uses a four-tab `BottomNavigationView` and three child destinations.
+
+## Exercise management — Developer 1
+
+### Add and edit exercises
+
+1. Open the **Exercises** tab and tap **Add exercise**.
+2. Enter an exercise name and muscle group/category, select **Repetitions and weight** or **Duration**, and optionally enter a description.
+3. Tap **Save exercise** to persist the exercise in Room and return to the catalogue.
+4. Tap an existing catalogue row to load and edit that exercise.
+5. Tap **Cancel** to leave without saving.
+
+Names must contain **2–80 characters after trimming**. The category must not be blank, and the tracking type must be one of the two supported options. Validation errors appear beside the relevant fields.
+
+The form preserves drafts across screen recreation using a ViewModel and `SavedStateHandle`. Save failures retain the draft for retry; load failures offer **Retry**, and missing exercises show an explanatory message. Save is disabled while loading or saving to prevent repeated submissions.
+
+Editing preserves the exercise ID and unique `code`, including for seeded exercises. New exercises receive a UUID code. The existing schema uses `category` and `measurementType`; this workflow does not change the shared database schema.
+
+### Implementation
+
+- [ExerciseFormFragment](app/src/main/java/com/fitjournal/app/features/exercises/ExerciseFormFragment.kt) — view binding, field errors, and navigation.
+- [ExerciseFormViewModel](app/src/main/java/com/fitjournal/app/features/exercises/ExerciseFormViewModel.kt) — draft state, loading, validation, and repository calls.
+- [Form layout](app/src/main/res/layout/fragment_exercise_form.xml) — scrollable XML form.
+- [ExerciseValidator](app/src/main/java/com/fitjournal/app/core/domain/Validators.kt) — validation shared by the form and unit tests.
+- [ExerciseRepository](app/src/main/java/com/fitjournal/app/core/data/repositories/ExerciseRepository.kt) — existing Room persistence boundary.
+
+**Remaining Developer 1 work:** expose category filtering and sorting in the catalogue and add dedicated JSON duplicate-prevention tests. The Add/Edit workflow is complete; the full exercise module still has these remaining tasks.
 
 ## Deliverables / tracking
 
@@ -58,7 +84,16 @@ From an Android Studio terminal after generating the wrapper:
 ./gradlew :app:connectedDebugAndroidTest  # requires running emulator/device
 ```
 
-The starter includes 3 JUnit tests and 1 Espresso smoke test. The team must extend to **at least 8 meaningful JUnit** and **3 Espresso UI tests**, plus document 2 real debugging cases.
+On Windows PowerShell, use `.\gradlew.bat` in place of `./gradlew`.
+
+The current suite contains **11 JUnit tests** and **2 Espresso tests**:
+
+- [ExerciseFormViewModelTest](app/src/test/java/com/fitjournal/app/ExerciseFormViewModelTest.kt): 8 tests covering validation boundaries, supported tracking types, invalid submissions, trimmed creation, repeated save taps, editing without changing identity, restored drafts, save retry, and missing records.
+- [ValidatorsTest](app/src/test/java/com/fitjournal/app/ValidatorsTest.kt): 3 existing exercise/workout validation and volume calculation tests.
+- [ExerciseFormTest](app/src/androidTest/java/com/fitjournal/app/ExerciseFormTest.kt): creates an exercise, verifies draft restoration after activity recreation, finds it in the catalogue, edits it, and verifies its ID and code are preserved. It removes only the records it creates.
+- [MainActivityTest](app/src/androidTest/java/com/fitjournal/app/MainActivityTest.kt): existing catalogue visibility smoke test.
+
+All 11 JUnit tests and both Espresso tests passed during verification. The team still needs **at least 3 Espresso UI tests** in total, tests for the remaining modules, and 2 documented real debugging cases.
 
 ## GitHub
 

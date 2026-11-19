@@ -7,7 +7,9 @@
         android:label="Exercises"/>
     <fragment android:id="@+id/exerciseFormFragment"
         android:name="com.fitjournal.app.features.exercises.ExerciseFormFragment"
-        android:label="Edit exercise"/>
+        android:label="@string/exercise_edit">
+        <argument android:name="exerciseId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
     <fragment android:id="@+id/workoutsFragment"
         android:name="com.fitjournal.app.features.workouts.WorkoutsFragment"
         android:label="Workouts"/>

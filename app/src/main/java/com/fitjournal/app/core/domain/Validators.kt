@@ -1,8 +1,26 @@
 package com.fitjournal.app.core.domain
 
+data class ExerciseValidationErrors(
+    val name: Boolean = false,
+    val category: Boolean = false,
+    val measurementType: Boolean = false
+) {
+    val hasErrors: Boolean get() = name || category || measurementType
+}
+
 object ExerciseValidator {
-    fun valid(name: String, category: String): Boolean =
-        name.trim().length in 2..80 && category.isNotBlank()
+    fun validate(
+        name: String,
+        category: String,
+        measurementType: String = "REPS_WEIGHT"
+    ) = ExerciseValidationErrors(
+        name = name.trim().length !in 2..80,
+        category = category.isBlank(),
+        measurementType = measurementType !in setOf("REPS_WEIGHT", "DURATION")
+    )
+
+    fun valid(name: String, category: String, measurementType: String = "REPS_WEIGHT"): Boolean =
+        !validate(name, category, measurementType).hasErrors
 }
 
 object WorkoutValidator {

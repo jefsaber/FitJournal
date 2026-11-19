@@ -5,10 +5,12 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.fitjournal.app.R
 import com.fitjournal.app.core.data.entities.ExerciseEntity
 import com.fitjournal.app.databinding.ItemExerciseBinding
 
-class ExercisePagingAdapter : PagingDataAdapter<ExerciseEntity, ExercisePagingAdapter.Holder>(DIFF) {
+class ExercisePagingAdapter(private val onEdit: (ExerciseEntity) -> Unit) :
+    PagingDataAdapter<ExerciseEntity, ExercisePagingAdapter.Holder>(DIFF) {
     class Holder(val binding: ItemExerciseBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder =
@@ -18,7 +20,10 @@ class ExercisePagingAdapter : PagingDataAdapter<ExerciseEntity, ExercisePagingAd
         val item = getItem(position) ?: return
         holder.binding.exerciseName.text = item.name
         holder.binding.exerciseCategory.text = item.category
-        // TODO Developer 1: edit/delete actions, filters and sort UI.
+        holder.binding.root.apply {
+            contentDescription = context.getString(R.string.exercise_edit_action, item.name)
+            setOnClickListener { onEdit(item) }
+        }
     }
 
     companion object {
