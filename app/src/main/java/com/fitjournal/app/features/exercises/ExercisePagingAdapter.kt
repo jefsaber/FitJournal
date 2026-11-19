@@ -20,6 +20,13 @@ class ExercisePagingAdapter(private val onEdit: (ExerciseEntity) -> Unit) :
         val item = getItem(position) ?: return
         holder.binding.exerciseName.text = item.name
         holder.binding.exerciseCategory.text = item.category
+        val timed = item.measurementType == "DURATION"
+        holder.binding.exerciseTracking.setText(
+            if (timed) R.string.exercise_duration_short else R.string.exercise_strength_short
+        )
+        holder.binding.exerciseIcon.setImageResource(
+            if (timed) R.drawable.ic_timer else R.drawable.ic_dumbbell
+        )
         holder.binding.root.apply {
             contentDescription = context.getString(R.string.exercise_edit_action, item.name)
             setOnClickListener { onEdit(item) }

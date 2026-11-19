@@ -1,5 +1,6 @@
 package com.fitjournal.app.features.exercises
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +47,20 @@ class ExerciseFormFragment : Fragment() {
                 })
             }
         }
-        binding.saveExerciseButton.setOnClickListener { model.save() }
+        binding.saveExerciseButton.setOnClickListener {
+            model.save()
+            val errors = model.state.value.errors
+            val invalidField = when {
+                errors.name -> binding.nameInput
+                errors.category -> binding.categoryInput
+                errors.measurementType -> binding.trackingRepsWeight
+                else -> null
+            }
+            invalidField?.let { field ->
+                field.requestFocus()
+                field.post { field.requestRectangleOnScreen(Rect(0, 0, field.width, field.height), false) }
+            }
+        }
         binding.retryButton.setOnClickListener { model.retryLoad() }
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
         viewLifecycleOwner.lifecycleScope.launch {

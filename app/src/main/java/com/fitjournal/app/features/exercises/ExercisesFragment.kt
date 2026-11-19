@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fitjournal.app.FitJournalApplication
 import com.fitjournal.app.R
 import com.fitjournal.app.databinding.FragmentExercisesBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ExercisesFragment : Fragment() {
@@ -40,6 +42,11 @@ class ExercisesFragment : Fragment() {
         }
         binding.exerciseList.layoutManager = LinearLayoutManager(requireContext())
         binding.exerciseList.adapter = adapter
+        binding.retryCatalogueButton.setOnClickListener { adapter.retry() }
+        binding.searchInput.setText(model.search.value)
+        binding.searchInput.setOnFocusChangeListener { _, focused ->
+            if (focused) binding.catalogueAppBar.setExpanded(false, true)
+        }
         binding.addExerciseButton.setOnClickListener { findNavController().navigate(R.id.exerciseFormFragment) }
         binding.searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -50,10 +57,22 @@ class ExercisesFragment : Fragment() {
         })
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { model.exercises.collect { adapter.submitData(it) } }
-                launch { adapter.loadStateFlow.collect { state ->
-                    binding.emptyState.visibility = if (state.refresh is LoadState.NotLoading && adapter.itemCount == 0) View.VISIBLE else View.GONE
-                } }
+                launch { model.exercises.collectLatest { adapter.submitData(it) } }
+                launch {
+                    model.count.collect { count ->
+                        binding.exerciseCount.text = resources.getQuantityString(
+                            R.plurals.exercise_library_count, count, count
+                        )
+                    }
+                }
+                launch {
+                    adapter.loadStateFlow.collect { state ->
+                        val empty = adapter.itemCount == 0
+                        binding.emptyState.isVisible = state.refresh is LoadState.NotLoading && empty
+                        binding.catalogueProgress.isVisible = state.refresh is LoadState.Loading && empty
+                        binding.catalogueError.isVisible = state.refresh is LoadState.Error && empty
+                    }
+                }
             }
         }
     }

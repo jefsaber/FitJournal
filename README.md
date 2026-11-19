@@ -45,6 +45,18 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 
 Navigation uses a four-tab `BottomNavigationView` and three child destinations.
 
+## App design
+
+The app uses a shared **Material 3** theme with emerald accents, warm neutral surfaces, rounded cards, consistent typography, and custom vector icons. Light and dark palettes follow the device theme automatically; an in-app theme preference control is still pending.
+
+- The branded app bar provides a back button on detail/form screens. Bottom navigation appears on the four main screens and hides while the keyboard is open.
+- The exercise catalogue includes a collapsing feature banner, search with a clear action, a live library count, tracking-type labels, and styled loading, empty, and retry states.
+- Add/Edit Exercise groups fields into basics, tracking, and coaching notes, with inline validation and automatic scrolling to the first invalid field.
+- Workout history uses the same card and empty-state styling. Unfinished features are clearly marked **Coming soon**, with a working shortcut to the exercise library.
+- The shared shell handles system-bar, display-cutout, and keyboard insets. The launcher icon matches the in-app branding.
+
+Shared styles live in [themes.xml](app/src/main/res/values/themes.xml), with palette tokens in [colors.xml](app/src/main/res/values/colors.xml) and [night colors](app/src/main/res/values-night/colors.xml). The UI remains XML Views with view binding.
+
 ## Exercise management — Developer 1
 
 ### Add and edit exercises

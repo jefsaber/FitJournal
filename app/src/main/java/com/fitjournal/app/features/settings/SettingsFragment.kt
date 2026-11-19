@@ -1,9 +1,11 @@
 package com.fitjournal.app.features.settings
 
+import com.fitjournal.app.R
 import com.fitjournal.app.core.ui.PlaceholderFragment
 
-/** TODO Developer 4: collect DataStore Flows; update theme, unit and catalogue sort. */
+/** Feature implementation remains with its assigned module owner. */
 class SettingsFragment : PlaceholderFragment() {
-    override val title = "Settings"
-    override val details = "Developer 4: make dark mode, kg/lb and default sort editable; apply updates immediately."
+    override val title get() = getString(R.string.settings_screen_title)
+    override val details get() = getString(R.string.settings_screen_description)
+    override val iconRes = R.drawable.ic_settings
 }

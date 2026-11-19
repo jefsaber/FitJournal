@@ -1,9 +1,11 @@
 package com.fitjournal.app.features.workouts
 
+import com.fitjournal.app.R
 import com.fitjournal.app.core.ui.PlaceholderFragment
 
-/** TODO Developer 2: workout CRUD; preserve state on rotation. */
+/** Feature implementation remains with its assigned module owner. */
 class WorkoutFormFragment : PlaceholderFragment() {
-    override val title = "Add / edit workout"
-    override val details = "Developer 2: implement workout form, validation, dates and CRUD using WorkoutRepository."
+    override val title get() = getString(R.string.workout_form_title)
+    override val details get() = getString(R.string.workout_form_description)
+    override val iconRes = R.drawable.ic_calendar
 }

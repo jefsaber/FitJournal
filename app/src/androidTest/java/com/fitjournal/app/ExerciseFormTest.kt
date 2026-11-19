@@ -32,10 +32,10 @@ class ExerciseFormTest {
         try {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 onView(withId(R.id.add_exercise_button)).perform(click())
-                onView(withId(R.id.name_input)).perform(replaceText(name), closeSoftKeyboard())
-                onView(withId(R.id.category_input)).perform(replaceText("Core"), closeSoftKeyboard())
+                onView(withId(R.id.name_input)).perform(scrollTo(), replaceText(name), closeSoftKeyboard())
+                onView(withId(R.id.category_input)).perform(scrollTo(), replaceText("Core"), closeSoftKeyboard())
                 onView(withId(R.id.tracking_duration)).perform(scrollTo(), click())
-                onView(withId(R.id.description_input)).perform(replaceText("Hold steady"), closeSoftKeyboard())
+                onView(withId(R.id.description_input)).perform(scrollTo(), replaceText("Hold steady"), closeSoftKeyboard())
                 scenario.recreate()
                 onView(withId(R.id.name_input)).check(matches(withText(name)))
                 onView(withId(R.id.category_input)).check(matches(withText("Core")))
@@ -52,7 +52,7 @@ class ExerciseFormTest {
                 awaitView(allOf(withId(R.id.name_input), withText(name)))
                 onView(withId(R.id.tracking_duration)).check(matches(isChecked()))
                 onView(withId(R.id.description_input)).check(matches(withText("Hold steady")))
-                onView(withId(R.id.name_input)).perform(replaceText(editedName), closeSoftKeyboard())
+                onView(withId(R.id.name_input)).perform(scrollTo(), replaceText(editedName), closeSoftKeyboard())
                 onView(withId(R.id.save_exercise_button)).perform(scrollTo(), click())
                 awaitView(withId(R.id.exercise_list))
                 onView(withId(R.id.search_input)).perform(replaceText(editedName), closeSoftKeyboard())

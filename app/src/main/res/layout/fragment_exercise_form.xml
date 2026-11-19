@@ -1,125 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-        <TextView
-            android:id="@+id/form_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:accessibilityHeading="true"
-            android:text="@string/add_exercise"
-            android:textAppearance="?attr/textAppearanceHeadline6" />
-        <ProgressBar
-            android:id="@+id/form_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/exercise_working"
-            android:visibility="gone" />
-        <TextView
-            android:id="@+id/form_error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:accessibilityLiveRegion="polite"
-            android:textColor="?attr/colorError"
-            android:visibility="gone" />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/retry_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/exercise_retry"
-            android:visibility="gone" />
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/name_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/exercise_name_label">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/name_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/category_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/exercise_category_label">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/category_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:labelFor="@id/tracking_group"
-            android:text="@string/exercise_tracking_label"
-            android:textStyle="bold" />
-        <RadioGroup
-            android:id="@+id/tracking_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <RadioButton
-                android:id="@+id/tracking_reps_weight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/exercise_tracking_reps_weight" />
-            <RadioButton
-                android:id="@+id/tracking_duration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/exercise_tracking_duration" />
-        </RadioGroup>
-        <TextView
-            android:id="@+id/tracking_error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:accessibilityLiveRegion="polite"
-            android:text="@string/exercise_tracking_error"
-            android:textColor="?attr/colorError"
-            android:visibility="gone" />
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/description_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/exercise_description_label">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textCapSentences|textMultiLine"
-                android:minLines="3" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/save_exercise_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/exercise_save" />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/exercise_cancel" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/canvas" android:fillViewport="true" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="20dp" android:focusableInTouchMode="true">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/form_eyebrow" android:textAppearance="@style/TextAppearance.FitJournal.Eyebrow" />
+        <TextView android:id="@+id/form_title" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:text="@string/add_exercise"
+            android:textAppearance="@style/TextAppearance.FitJournal.Title" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:layout_marginBottom="24dp"
+            android:text="@string/form_subtitle" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+        <ProgressBar android:id="@+id/form_progress"
+            android:layout_width="32dp" android:layout_height="32dp" android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" android:contentDescription="@string/exercise_working" android:visibility="gone" />
+        <TextView android:id="@+id/form_error"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" android:padding="16dp"
+            android:background="@color/error_container" android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.FitJournal.Body"
+            android:textColor="@color/error" android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/retry_button"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" android:text="@string/exercise_retry" android:visibility="gone" />
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+            app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/form_basics_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                    android:text="@string/form_basics_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/name_layout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="@string/exercise_name_label" app:helperText="@string/form_name_helper">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/name_input"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapWords" android:maxLines="1" android:imeOptions="actionNext" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/category_layout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" android:hint="@string/exercise_category_label"
+                    app:helperText="@string/form_category_helper">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/category_input"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapWords" android:maxLines="1" android:imeOptions="actionNext" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+            app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/form_tracking_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="16dp" android:labelFor="@id/tracking_group"
+                    android:text="@string/form_tracking_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                <RadioGroup android:id="@+id/tracking_group"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <com.google.android.material.radiobutton.MaterialRadioButton android:id="@+id/tracking_reps_weight"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp"
+                        android:background="@drawable/bg_tracking_option" android:paddingStart="12dp" android:paddingEnd="12dp"
+                        android:buttonTint="@color/primary" android:text="@string/exercise_tracking_reps_weight"
+                        android:textAppearance="@style/TextAppearance.FitJournal.Body" android:textColor="@color/ink" />
+                    <com.google.android.material.radiobutton.MaterialRadioButton android:id="@+id/tracking_duration"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp"
+                        android:layout_marginTop="10dp" android:background="@drawable/bg_tracking_option"
+                        android:paddingStart="12dp" android:paddingEnd="12dp" android:buttonTint="@color/primary"
+                        android:text="@string/exercise_tracking_duration"
+                        android:textAppearance="@style/TextAppearance.FitJournal.Body" android:textColor="@color/ink" />
+                </RadioGroup>
+                <TextView android:id="@+id/tracking_error"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                    android:accessibilityLiveRegion="polite" android:text="@string/exercise_tracking_error"
+                    android:textColor="@color/error" android:textSize="12sp" android:visibility="gone" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+            app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/form_notes_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                    android:text="@string/form_notes_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/description_layout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="@string/exercise_description_label">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/description_input"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="top"
+                        android:inputType="textCapSentences|textMultiLine" android:minLines="3" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.button.MaterialButton android:id="@+id/save_exercise_button"
+            android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="24dp" android:text="@string/exercise_save"
+            app:icon="@drawable/ic_check" app:iconGravity="textStart" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/cancel_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent" android:layout_height="52dp"
+            android:layout_marginTop="8dp" android:text="@string/exercise_cancel" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
