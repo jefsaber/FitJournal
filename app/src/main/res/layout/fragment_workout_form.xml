@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/canvas" android:fillViewport="true" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="20dp" android:focusableInTouchMode="true">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/workout_form_eyebrow" android:textAppearance="@style/TextAppearance.FitJournal.Eyebrow" />
+        <TextView android:id="@+id/workout_form_title" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:text="@string/add_workout"
+            android:textAppearance="@style/TextAppearance.FitJournal.Title" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:layout_marginBottom="24dp"
+            android:text="@string/workout_form_subtitle" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+        <ProgressBar android:id="@+id/workout_form_progress"
+            android:layout_width="32dp" android:layout_height="32dp" android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" android:contentDescription="@string/workout_working" android:visibility="gone" />
+        <TextView android:id="@+id/workout_form_error"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" android:padding="16dp"
+            android:background="@color/error_container" android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.FitJournal.Body"
+            android:textColor="@color/error" android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/workout_retry_button"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" android:text="@string/exercise_retry" android:visibility="gone" />
+
+        <!-- Session basics: title and date -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+            app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/workout_basics_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                    android:text="@string/workout_basics_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/workout_title_layout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="@string/workout_title_label" app:helperText="@string/workout_title_helper">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/workout_title_input"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapSentences" android:maxLines="1" android:imeOptions="actionDone" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/workout_date_layout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" android:hint="@string/workout_date_label"
+                    app:helperText="@string/workout_date_helper"
+                    app:endIconMode="custom" app:endIconDrawable="@drawable/ic_calendar"
+                    app:endIconContentDescription="@string/workout_date_choose" app:endIconTint="@color/primary">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/workout_date_input"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:focusable="false" android:clickable="true" android:cursorVisible="false"
+                        android:inputType="none" android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Status -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+            app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/workout_status_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="8dp"
+                    android:text="@string/workout_status_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/workout_completed_switch"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp"
+                    android:text="@string/workout_completed_label"
+                    android:textAppearance="@style/TextAppearance.FitJournal.Body" android:textColor="@color/ink" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Notes -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+            app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/workout_notes_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                    android:text="@string/workout_notes_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/workout_notes_layout"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="@string/workout_notes_label"
+                    app:counterEnabled="true" app:counterMaxLength="500">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/workout_notes_input"
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="top"
+                        android:inputType="textCapSentences|textMultiLine" android:minLines="3" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/save_workout_button"
+            android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="24dp" android:text="@string/workout_save"
+            app:icon="@drawable/ic_check" app:iconGravity="textStart" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/delete_workout_button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent" android:layout_height="52dp"
+            android:layout_marginTop="8dp" android:text="@string/workout_delete"
+            android:textAllCaps="false" android:textColor="@color/error"
+            app:cornerRadius="16dp" app:strokeColor="@color/error" android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/workout_cancel_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent" android:layout_height="52dp"
+            android:layout_marginTop="8dp" android:text="@string/exercise_cancel" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
