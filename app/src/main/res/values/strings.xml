@@ -99,6 +99,26 @@
     <string name="workout_not_found">This workout no longer exists. Return to your history.</string>
     <string name="workout_save_error">Could not save your workout. Your changes are still here; please try again.</string>
     <string name="workout_delete_error">Could not delete this workout. Please try again.</string>
+    <string name="search_workouts">Search workouts or notes</string>
+    <string name="workout_filter_status">Filter by status</string>
+    <string name="workout_filter_period">Filter by date</string>
+    <string name="workout_filter_all">All</string>
+    <string name="workout_status_planned">Planned</string>
+    <string name="workout_status_completed">Completed</string>
+    <string name="workout_filter_any_time">Any time</string>
+    <string name="workout_filter_upcoming">Upcoming</string>
+    <string name="workout_filter_last_7">Last 7 days</string>
+    <string name="workout_filter_last_30">Last 30 days</string>
+    <plurals name="workout_count">
+        <item quantity="one">%d workout logged</item>
+        <item quantity="other">%d workouts logged</item>
+    </plurals>
+    <string name="workout_count_filtered">Showing %1$d of %2$d workouts</string>
+    <string name="workouts_no_matches_title">No matching workouts</string>
+    <string name="workouts_no_matches_message">Try another search, status, or date range.</string>
+    <string name="workout_clear_filters">Clear filters</string>
+    <string name="workout_edit_action">Edit %1$s</string>
+    <string name="workout_item_description">%1$s, %2$s, %3$s. Open workout details.</string>
     <string name="workout_date_today">Today</string>
     <string name="workout_date_yesterday">Yesterday</string>
     <string name="workout_date_tomorrow">Tomorrow</string>
