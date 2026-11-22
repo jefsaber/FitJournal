@@ -4,7 +4,7 @@
 
 Deadline: **26 November 2026** · Group: **4 developers**
 
-> **Status: exercise Add/Edit workflow implemented**. Navigation, database contracts, the initial exercise catalogue, JSON import, and the preferences repository are present. Exercises can now be created and edited with validation and draft restoration. Catalogue filter/sort controls, workout forms, workout logging, charts, and settings UI remain to be completed.
+> **Status: exercise Add/Edit and workout management implemented**. Navigation, database contracts, the initial exercise catalogue, JSON import, and the preferences repository are present. Exercises can be created and edited with validation and draft restoration. Workouts can be created, edited, and deleted, and the workout history can be searched and filtered by status and date. Catalogue filter/sort controls, workout logging (entries), charts, and settings UI remain to be completed.
 
 ## Requirements / setup
 
@@ -20,7 +20,7 @@ Deadline: **26 November 2026** · Group: **4 developers**
 3. Sync Gradle, then **Run > Run 'app'**.
 4. The first launch imports 24 exercises from `app/src/main/assets/exercises.json` and shows them in the **Exercises** catalogue. The import does not overwrite existing entries.
 
-> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 11 JUnit tests passed, and both Espresso tests passed on the API 37 emulator.
+> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 24 JUnit tests passed, and all 3 Espresso tests passed on the API 37 emulator.
 
 ## Architecture
 
@@ -37,8 +37,8 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 
 1. Exercise catalogue — initial Paging 3 list + search (scaffold).
 2. Add/edit exercise — implemented by Developer 1: validation, Room persistence, loading/error states, and draft restoration.
-3. Workout history — Flow-powered empty/list state (scaffold).
-4. Add/edit workout — TODO developer 2.
+3. Workout history — implemented by Developer 2: search, status and date filters, live counts, and empty/no-match states.
+4. Add/edit workout — implemented by Developer 2: validation, date picker, completion status, notes, deletion, and draft restoration.
 5. Workout details/logging — TODO developer 3.
 6. Progress dashboard — TODO developer 3.
 7. Settings — TODO developer 4.
@@ -52,7 +52,9 @@ The app uses a shared **Material 3** theme with emerald accents, warm neutral su
 - The branded app bar provides a back button on detail/form screens. Bottom navigation appears on the four main screens and hides while the keyboard is open.
 - The exercise catalogue includes a collapsing feature banner, search with a clear action, a live library count, tracking-type labels, and styled loading, empty, and retry states.
 - Add/Edit Exercise groups fields into basics, tracking, and coaching notes, with inline validation and automatic scrolling to the first invalid field.
-- Workout history uses the same card and empty-state styling. Unfinished features are clearly marked **Coming soon**, with a working shortcut to the exercise library.
+- Workout history uses the same hero, search field, and card styling, with filter chips, **Completed**/**Planned** status badges, a notes preview, and an edit action on each card.
+- Add/Edit Workout follows the exercise form layout: session basics, status, and notes cards with inline validation and a confirmed delete action.
+- Unfinished features are clearly marked **Coming soon**, with a working shortcut to the exercise library.
 - The shared shell handles system-bar, display-cutout, and keyboard insets. The launcher icon matches the in-app branding.
 
 Shared styles live in [themes.xml](app/src/main/res/values/themes.xml), with palette tokens in [colors.xml](app/src/main/res/values/colors.xml) and [night colors](app/src/main/res/values-night/colors.xml). The UI remains XML Views with view binding.
@@ -83,6 +85,48 @@ Editing preserves the exercise ID and unique `code`, including for seeded exerci
 
 **Remaining Developer 1 work:** expose category filtering and sorting in the catalogue and add dedicated JSON duplicate-prevention tests. The Add/Edit workflow is complete; the full exercise module still has these remaining tasks.
 
+## Workout management — Developer 2
+
+Branch: `feature/workouts`.
+
+### Create, edit, and delete workouts
+
+1. Open the **Workouts** tab and tap **Add workout**.
+2. Enter a title. The session date defaults to **today**; tap the date field or calendar icon to choose another day.
+3. Optionally switch on **Mark as completed** and add session notes.
+4. Tap **Save workout** to persist it in Room and return to the history.
+5. Tap the **edit** (pencil) button on a workout card to change it, or tap **Delete workout** in the form and confirm. Deleting a workout also removes its logged entries (cascading foreign key).
+6. Tapping the card itself opens the workout details screen (Developer 3) with the `workoutId` argument.
+
+Validation rules:
+
+- The title must contain **2–80 characters after trimming**.
+- The date is required and must fall between **1 January 2000** and **one year from today**; the date picker enforces the same range.
+- A workout marked **completed cannot be dated in the future**; planned sessions can.
+- Notes are optional and limited to **500 characters** (with a live counter).
+
+Like the exercise form, the workout form keeps its draft across rotation and process recreation using a ViewModel and `SavedStateHandle`. Save and delete failures keep the draft and show a message; load failures offer **Retry**; missing workouts show an explanatory message. Buttons are disabled while loading, saving, or deleting to prevent repeated submissions.
+
+### Proper dates
+
+`sessionDate` stores the epoch milliseconds of the **local start of the chosen day**. All conversions are in [WorkoutDates](app/src/main/java/com/fitjournal/app/core/domain/WorkoutDates.kt), including the UTC-midnight values used by `MaterialDatePicker`, so a chosen day never shifts across time zones or daylight-saving changes. Dates are displayed in the device's locale: the full date in the form (for example, *Sunday, November 22, 2026*) and **Today** / **Yesterday** / **Tomorrow** or a medium date in the history.
+
+### History search and filters
+
+- **Search** matches the workout title or notes.
+- **Status:** All, Planned, or Completed.
+- **Date:** Any time, Upcoming (today onwards, soonest first), Last 7 days, or Last 30 days (both including today).
+- Filters combine, survive rotation, and update live from Room through Flow. The header shows *N workouts logged* or *Showing X of Y workouts*. An empty history and a filter with no matches show different messages, and the latter offers **Clear filters**.
+
+### Implementation
+
+- [WorkoutsFragment](app/src/main/java/com/fitjournal/app/features/workouts/WorkoutsFragment.kt) / [WorkoutsViewModel](app/src/main/java/com/fitjournal/app/features/workouts/WorkoutsViewModel.kt) — history list, filter state, and empty/no-match states.
+- [WorkoutAdapter](app/src/main/java/com/fitjournal/app/features/workouts/WorkoutAdapter.kt) — workout cards with relative dates, status badges, and edit actions.
+- [WorkoutFormFragment](app/src/main/java/com/fitjournal/app/features/workouts/WorkoutFormFragment.kt) / [WorkoutFormViewModel](app/src/main/java/com/fitjournal/app/features/workouts/WorkoutFormViewModel.kt) — form, date picker, delete confirmation, and draft state.
+- [WorkoutValidator](app/src/main/java/com/fitjournal/app/core/domain/Validators.kt) — title, date, and notes rules shared by the form and tests.
+- [WorkoutDates / WorkoutHistoryFilter](app/src/main/java/com/fitjournal/app/core/domain/WorkoutDates.kt) — date conversion and filter date windows.
+- [WorkoutDao](app/src/main/java/com/fitjournal/app/core/data/dao/WorkoutDao.kt) / [WorkoutRepository](app/src/main/java/com/fitjournal/app/core/data/repositories/WorkoutRepository.kt) — filtered history query, lookup by ID, and count. The `workouts` table schema and navigation IDs are unchanged; the `workoutFormFragment` destination gained an optional `workoutId` argument.
+
 ## Deliverables / tracking
 
 See [docs/team-plan.md](docs/team-plan.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/debugging-log.md](docs/debugging-log.md).
@@ -98,14 +142,17 @@ From an Android Studio terminal after generating the wrapper:
 
 On Windows PowerShell, use `.\gradlew.bat` in place of `./gradlew`.
 
-The current suite contains **11 JUnit tests** and **2 Espresso tests**:
+The current suite contains **24 JUnit tests** and **3 Espresso tests**:
 
 - [ExerciseFormViewModelTest](app/src/test/java/com/fitjournal/app/ExerciseFormViewModelTest.kt): 8 tests covering validation boundaries, supported tracking types, invalid submissions, trimmed creation, repeated save taps, editing without changing identity, restored drafts, save retry, and missing records.
+- [WorkoutFormViewModelTest](app/src/test/java/com/fitjournal/app/WorkoutFormViewModelTest.kt): 8 tests covering the default date, invalid titles, trimmed creation stored at the local start of day, repeated save taps, completed-in-future rejection, editing the same record, restored drafts, save retry, deletion, and missing records.
+- [WorkoutHistoryTest](app/src/test/java/com/fitjournal/app/WorkoutHistoryTest.kt): 5 tests covering workout validation boundaries, date round-trips (including a daylight-saving day), filter date windows, combined search/status/period filtering with ordering and filter restoration, and empty versus no-match states. Uses the in-memory [MemoryWorkoutDao](app/src/test/java/com/fitjournal/app/MemoryWorkoutDao.kt).
 - [ValidatorsTest](app/src/test/java/com/fitjournal/app/ValidatorsTest.kt): 3 existing exercise/workout validation and volume calculation tests.
 - [ExerciseFormTest](app/src/androidTest/java/com/fitjournal/app/ExerciseFormTest.kt): creates an exercise, verifies draft restoration after activity recreation, finds it in the catalogue, edits it, and verifies its ID and code are preserved. It removes only the records it creates.
+- [WorkoutFormTest](app/src/androidTest/java/com/fitjournal/app/WorkoutFormTest.kt): creates a completed workout, verifies draft restoration after activity recreation, finds it with the Completed and Last 7 days filters, checks that the Planned filter hides it, edits it while preserving its ID, and deletes it through the confirmation dialog. It removes only the records it creates.
 - [MainActivityTest](app/src/androidTest/java/com/fitjournal/app/MainActivityTest.kt): existing catalogue visibility smoke test.
 
-All 11 JUnit tests and both Espresso tests passed during verification. The team still needs **at least 3 Espresso UI tests** in total, tests for the remaining modules, and 2 documented real debugging cases.
+All 24 JUnit tests and all 3 Espresso tests passed during verification. The team still needs tests for the remaining modules and 2 documented real debugging cases.
 
 ## GitHub
 
