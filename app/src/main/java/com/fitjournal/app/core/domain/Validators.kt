@@ -65,6 +65,13 @@ object WorkoutValidator {
     )
 }
 
+object WorkoutEntryValidator {
+    fun strengthHasErrors(sets: Int, repetitions: Int, weightKg: Double): Boolean =
+        sets <= 0 || repetitions <= 0 || !weightKg.isFinite() || weightKg <= 0.0
+
+    fun durationHasErrors(seconds: Long): Boolean = seconds <= 0L
+}
+
 object ProgressCalculator {
     /** Total load volume in kg-reps; time-based entries are excluded. */
     fun volumeKg(sets: Int, repetitions: Int, weightKg: Double): Double {

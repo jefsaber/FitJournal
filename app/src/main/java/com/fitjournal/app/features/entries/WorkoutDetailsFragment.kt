@@ -19,6 +19,7 @@ import com.fitjournal.app.FitJournalApplication
 import com.fitjournal.app.R
 import com.fitjournal.app.core.data.entities.ExerciseEntity
 import com.fitjournal.app.core.data.entities.WorkoutEntryEntity
+import com.fitjournal.app.core.domain.WorkoutEntryValidator
 import com.fitjournal.app.databinding.FragmentWorkoutDetailsBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -139,16 +140,20 @@ class WorkoutDetailsFragment : Fragment() {
                     val exercise = exercises[exercisePicker.selectedItemPosition]
                     val updated = if (exercise.measurementType == "DURATION") {
                         val seconds = duration.text?.toString()?.toLongOrNull()
-                        if (seconds == null || seconds <= 0) { duration.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
+                        if (seconds == null || WorkoutEntryValidator.durationHasErrors(seconds)) { duration.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
                         (existing ?: WorkoutEntryEntity(workoutId = workoutId, exerciseId = exercise.id))
                             .copy(durationSeconds = seconds, sets = 0, repetitions = 0, weightKg = 0.0)
                     } else {
                         val setCount = sets.text?.toString()?.toIntOrNull()
                         val repetitionCount = reps.text?.toString()?.toIntOrNull()
                         val kilograms = weight.text?.toString()?.toDoubleOrNull()
-                        if (setCount == null || setCount <= 0) { sets.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
-                        if (repetitionCount == null || repetitionCount <= 0) { reps.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
-                        if (kilograms == null || kilograms <= 0) { weight.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
+                        if (setCount == null || repetitionCount == null || kilograms == null ||
+                            WorkoutEntryValidator.strengthHasErrors(setCount, repetitionCount, kilograms)) {
+                            if (setCount == null || setCount <= 0) sets.error = getString(R.string.workout_entry_invalid)
+                            if (repetitionCount == null || repetitionCount <= 0) reps.error = getString(R.string.workout_entry_invalid)
+                            if (kilograms == null || WorkoutEntryValidator.strengthHasErrors(1, 1, kilograms)) weight.error = getString(R.string.workout_entry_invalid)
+                            return@setOnClickListener
+                        }
                         (existing ?: WorkoutEntryEntity(workoutId = workoutId, exerciseId = exercise.id))
                             .copy(sets = setCount, repetitions = repetitionCount, weightKg = kilograms, durationSeconds = 0)
                     }
