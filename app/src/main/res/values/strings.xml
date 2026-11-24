@@ -124,4 +124,13 @@
     <string name="workout_date_tomorrow">Tomorrow</string>
     <string name="workout_details_title">One set at a time.</string>
     <string name="workout_details_description">Your exercises, sets, reps, and weights will live here. Workout logging is coming soon.</string>
+    <string name="workout_entries_empty">No exercises have been logged in this workout yet.</string>
+    <string name="workout_entry_add">Add exercise to workout</string>
+    <string name="workout_entry_choose_exercise">Choose an exercise</string>
+    <string name="workout_entry_sets">Sets</string>
+    <string name="workout_entry_repetitions">Repetitions</string>
+    <string name="workout_entry_weight">Weight (kg)</string>
+    <string name="workout_entry_duration">Duration (seconds)</string>
+    <string name="workout_entry_invalid">Enter valid values greater than zero for each field.</string>
+    <string name="workout_entry_save">Save entry</string>
 </resources>

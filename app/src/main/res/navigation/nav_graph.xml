@@ -20,7 +20,9 @@
     </fragment>
     <fragment android:id="@+id/workoutDetailsFragment"
         android:name="com.fitjournal.app.features.entries.WorkoutDetailsFragment"
-        android:label="Workout details"/>
+        android:label="Workout details">
+        <argument android:name="workoutId" app:argType="long" />
+    </fragment>
     <fragment android:id="@+id/progressFragment"
         android:name="com.fitjournal.app.features.progress.ProgressFragment"
         android:label="Progress"/>
