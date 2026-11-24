@@ -135,4 +135,8 @@
     <string name="workout_entry_save">Save entry</string>
     <string name="workout_entry_no_exercises">Add an exercise to your library before logging it.</string>
     <string name="workout_entry_save_error">Could not save this entry. Please try again.</string>
+    <string name="workout_entry_edit">Edit</string>
+    <string name="workout_entry_delete">Delete</string>
+    <string name="workout_entry_delete_title">Delete this logged exercise?</string>
+    <string name="workout_entry_delete_message">This logged entry will be removed from the workout.</string>
 </resources>

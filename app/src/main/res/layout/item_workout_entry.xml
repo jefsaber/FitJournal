@@ -10,5 +10,15 @@
             android:textAppearance="@style/TextAppearance.FitJournal.Section" />
         <TextView android:id="@+id/entry_metrics" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginTop="4dp" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="end">
+            <com.google.android.material.button.MaterialButton android:id="@+id/edit_entry_button"
+                style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/workout_entry_edit" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/delete_entry_button"
+                style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/workout_entry_delete"
+                android:textColor="@color/error" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

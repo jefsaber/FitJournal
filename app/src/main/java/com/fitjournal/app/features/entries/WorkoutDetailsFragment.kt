@@ -67,6 +67,19 @@ class WorkoutDetailsFragment : Fragment() {
                                 entry.sets.toString() + " sets · " + entry.repetitions.toString() +
                                     " reps · " + entry.weightKg.toString() + " kg"
                             }
+                            row.findViewById<View>(R.id.edit_entry_button).setOnClickListener { showEntryForm(entry) }
+                            row.findViewById<View>(R.id.delete_entry_button).setOnClickListener {
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle(R.string.workout_entry_delete_title)
+                                    .setMessage(R.string.workout_entry_delete_message)
+                                    .setNegativeButton(R.string.exercise_cancel, null)
+                                    .setPositiveButton(R.string.workout_entry_delete) { _, _ ->
+                                        viewLifecycleOwner.lifecycleScope.launch {
+                                            runCatching { container.entries.delete(entry) }
+                                                .onFailure { Toast.makeText(requireContext(), R.string.workout_entry_save_error, Toast.LENGTH_LONG).show() }
+                                        }
+                                    }.show()
+                            }
                             binding.workoutDetailsEntries.addView(row)
                         }
                     }
@@ -75,7 +88,7 @@ class WorkoutDetailsFragment : Fragment() {
         }
     }
 
-    private fun showEntryForm() {
+    private fun showEntryForm(existing: WorkoutEntryEntity? = null) {
         viewLifecycleOwner.lifecycleScope.launch {
             val exercises = container.exercises.all.first()
             if (exercises.isEmpty()) {
@@ -90,10 +103,19 @@ class WorkoutDetailsFragment : Fragment() {
             val exercisePicker = Spinner(context)
             exercisePicker.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, exercises.map { it.name })
             content.addView(exercisePicker)
+            val initialIndex = exercises.indexOfFirst { it.id == existing?.exerciseId }.coerceAtLeast(0)
+            exercisePicker.setSelection(initialIndex)
+            exercisePicker.isEnabled = existing == null
             val sets = input(content, R.string.workout_entry_sets)
             val reps = input(content, R.string.workout_entry_repetitions)
             val weight = input(content, R.string.workout_entry_weight)
             val duration = input(content, R.string.workout_entry_duration)
+            existing?.let {
+                sets.setText(if (it.sets == 0) "" else it.sets.toString())
+                reps.setText(if (it.repetitions == 0) "" else it.repetitions.toString())
+                weight.setText(if (it.weightKg == 0.0) "" else it.weightKg.toString())
+                duration.setText(if (it.durationSeconds == 0L) "" else it.durationSeconds.toString())
+            }
             fun updateFields() {
                 val timed = exercises[exercisePicker.selectedItemPosition].measurementType == "DURATION"
                 sets.visibility = if (timed) View.GONE else View.VISIBLE
@@ -107,7 +129,7 @@ class WorkoutDetailsFragment : Fragment() {
             }
             updateFields()
             val dialog = MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.workout_entry_choose_exercise)
+                .setTitle(if (existing == null) R.string.workout_entry_choose_exercise else R.string.workout_entry_edit)
                 .setView(content)
                 .setNegativeButton(R.string.exercise_cancel, null)
                 .setPositiveButton(R.string.workout_entry_save, null)
@@ -115,10 +137,11 @@ class WorkoutDetailsFragment : Fragment() {
             dialog.setOnShowListener {
                 dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     val exercise = exercises[exercisePicker.selectedItemPosition]
-                    val entry = if (exercise.measurementType == "DURATION") {
+                    val updated = if (exercise.measurementType == "DURATION") {
                         val seconds = duration.text?.toString()?.toLongOrNull()
                         if (seconds == null || seconds <= 0) { duration.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
-                        WorkoutEntryEntity(workoutId = workoutId, exerciseId = exercise.id, durationSeconds = seconds)
+                        (existing ?: WorkoutEntryEntity(workoutId = workoutId, exerciseId = exercise.id))
+                            .copy(durationSeconds = seconds, sets = 0, repetitions = 0, weightKg = 0.0)
                     } else {
                         val setCount = sets.text?.toString()?.toIntOrNull()
                         val repetitionCount = reps.text?.toString()?.toIntOrNull()
@@ -126,11 +149,13 @@ class WorkoutDetailsFragment : Fragment() {
                         if (setCount == null || setCount <= 0) { sets.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
                         if (repetitionCount == null || repetitionCount <= 0) { reps.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
                         if (kilograms == null || kilograms <= 0) { weight.error = getString(R.string.workout_entry_invalid); return@setOnClickListener }
-                        WorkoutEntryEntity(workoutId = workoutId, exerciseId = exercise.id, sets = setCount, repetitions = repetitionCount, weightKg = kilograms)
+                        (existing ?: WorkoutEntryEntity(workoutId = workoutId, exerciseId = exercise.id))
+                            .copy(sets = setCount, repetitions = repetitionCount, weightKg = kilograms, durationSeconds = 0)
                     }
                     viewLifecycleOwner.lifecycleScope.launch {
-                        runCatching { container.entries.create(entry) }
-                            .onSuccess { dialog.dismiss() }
+                        runCatching {
+                            if (existing == null) container.entries.create(updated) else container.entries.update(updated)
+                        }.onSuccess { dialog.dismiss() }
                             .onFailure { Toast.makeText(requireContext(), R.string.workout_entry_save_error, Toast.LENGTH_LONG).show() }
                     }
                 }
