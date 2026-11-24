@@ -66,13 +66,36 @@ object WorkoutValidator {
 }
 
 object WorkoutEntryValidator {
+    data class StrengthErrors(
+        val sets: Boolean = false,
+        val repetitions: Boolean = false,
+        val weight: Boolean = false
+    ) {
+        val hasErrors: Boolean get() = sets || repetitions || weight
+    }
+
+    fun validateStrength(sets: Int?, repetitions: Int?, weightKg: Double?): StrengthErrors =
+        StrengthErrors(
+            sets = sets == null || sets <= 0,
+            repetitions = repetitions == null || repetitions <= 0,
+            weight = weightKg == null || !weightKg.isFinite() || weightKg <= 0.0
+        )
+
     fun strengthHasErrors(sets: Int, repetitions: Int, weightKg: Double): Boolean =
-        sets <= 0 || repetitions <= 0 || !weightKg.isFinite() || weightKg <= 0.0
+        validateStrength(sets, repetitions, weightKg).hasErrors
 
     fun durationHasErrors(seconds: Long): Boolean = seconds <= 0L
 }
 
 object ProgressCalculator {
+    data class EntryMetric(
+        val measurementType: String,
+        val sets: Int = 0,
+        val repetitions: Int = 0,
+        val weightKg: Double = 0.0,
+        val durationSeconds: Long = 0
+    )
+
     /** Total load volume in kg-reps; time-based entries are excluded. */
     fun volumeKg(sets: Int, repetitions: Int, weightKg: Double): Double {
         require(sets >= 0 && repetitions >= 0 && weightKg >= 0)
@@ -81,5 +104,21 @@ object ProgressCalculator {
 
     /** Highest logged weight for strength entries or longest duration for timed entries. */
     fun personalRecord(values: List<Double>): Double? =
-        values.filter { it.isFinite() && it >= 0.0 }.maxOrNull()
+        values.filter { it.isFinite() && it > 0.0 }.maxOrNull()
+
+    /** Sum strength volume only; duration entries intentionally contribute zero. */
+    fun totalVolumeKg(entries: List<EntryMetric>): Double = entries
+        .asSequence()
+        .filter {
+            it.measurementType == "REPS_WEIGHT" && it.sets >= 0 && it.repetitions >= 0 &&
+                it.weightKg.isFinite() && it.weightKg >= 0.0
+        }
+        .sumOf { volumeKg(it.sets, it.repetitions, it.weightKg) }
+
+    /** Max weight for strength or longest duration for timed exercise entries. */
+    fun personalRecord(measurementType: String, entries: List<EntryMetric>): Double? =
+        personalRecord(
+            if (measurementType == "DURATION") entries.map { it.durationSeconds.toDouble() }
+            else entries.map { it.weightKg }
+        )
 }

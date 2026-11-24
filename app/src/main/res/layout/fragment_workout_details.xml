@@ -22,6 +22,10 @@
         <com.google.android.material.button.MaterialButton android:id="@+id/add_entry_button"
             android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="20dp"
             android:text="@string/workout_entry_add" />
+        <TextView android:id="@+id/workout_entry_operation_error"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:text="@string/workout_entry_operation_error"
+            android:textColor="@color/error" android:visibility="gone" />
         <TextView android:id="@+id/workout_details_empty" android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginTop="20dp" android:text="@string/workout_entries_empty" android:visibility="gone"
             android:textAppearance="@style/TextAppearance.FitJournal.Body" />

@@ -6,6 +6,8 @@ flowchart TD
   VM --> R[Repository]
   R --> DAO[Room DAO]
   DAO --> DB[(SQLite - Room)]
+  DAO --> JOIN[LoggedWorkoutEntry projection]
+  JOIN --> VM
   VM --> P[SettingsRepository]
   P --> DS[(Preferences DataStore)]
   IMP[JSON importer] --> DAO
@@ -26,3 +28,6 @@ erDiagram
 - Seed exercises carry a unique `code`; import skips conflicts and never overwrites edits.
 - The importer should run once per install; use the DataStore flag + a unique index and `IGNORE` for crash-safe retries.
 - UI state should be collected with repeatOnLifecycle and survive rotation through ViewModels.
+- Workout-entry drafts are stored in `SavedStateHandle`; weights cross the UI boundary in the selected unit but persist as kilograms.
+- Progress combines live workout and joined-entry Flows. Counts, volume, charts, and personal records include completed workouts only.
+- Strength volume is `sets × repetitions × weightKg`; duration entries are excluded. Personal records use maximum weight for strength and longest duration for timed exercises.

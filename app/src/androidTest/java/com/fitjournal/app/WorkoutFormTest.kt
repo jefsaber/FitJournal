@@ -8,6 +8,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -83,7 +84,8 @@ class WorkoutFormTest {
                 awaitView(allOf(withId(R.id.workout_title_input), withText(editedTitle)))
                 onView(withId(R.id.delete_workout_button)).perform(scrollTo(), click())
                 onView(withText(R.string.workout_delete_confirm)).inRoot(isDialog()).perform(click())
-                awaitView(withId(R.id.workouts_no_matches))
+                awaitView(withId(R.id.workout_list))
+                onView(withId(R.id.workout_name)).check(doesNotExist())
                 assertNull(runBlocking { repository.find(created.id) })
             }
         } finally {

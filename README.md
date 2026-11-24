@@ -4,7 +4,7 @@
 
 Deadline: **26 November 2026** · Group: **4 developers**
 
-> **Status: exercise Add/Edit and workout management implemented**. Navigation, database contracts, the initial exercise catalogue, JSON import, and the preferences repository are present. Exercises can be created and edited with validation and draft restoration. Workouts can be created, edited, and deleted, and the workout history can be searched and filtered by status and date. Catalogue filter/sort controls, workout logging (entries), charts, and settings UI remain to be completed.
+> **Status: exercise Add/Edit, workout management, workout logging, and progress statistics implemented**. Users can create workouts, log strength or timed exercises, edit/delete entries, and review completed-workout volume, a recent-volume chart, and personal records. Catalogue filter/sort controls and the Settings UI remain to be completed.
 
 ## Requirements / setup
 
@@ -16,17 +16,18 @@ Deadline: **26 November 2026** · Group: **4 developers**
 ### Open the project
 
 1. Unzip or clone the project and choose **Open** on the `FitJournal/` folder in Android Studio.
-2. **Bootstrap the official Gradle wrapper once:** the starter contains wrapper properties but not the executable wrapper files (the creation environment could not download them). On **Windows**, run `powershell -ExecutionPolicy Bypass -File tools\bootstrap-gradle-wrapper.ps1` in the project directory. On **macOS/Linux**, run `bash tools/bootstrap-gradle-wrapper.sh`. These scripts download the *official* Gradle 8.13 wrapper scripts and binary from the pinned Gradle GitHub tag; inspect the scripts before running them. Commit the resulting `gradlew`, `gradlew.bat`, and `gradle/wrapper/gradle-wrapper.jar` files so that teammates will not need to bootstrap again. Alternatively, with an installed `gradle` executable, run `gradle wrapper --gradle-version 8.13`.
+2. The pinned official Gradle 8.13 wrapper is included; no system Gradle installation is required.
 3. Sync Gradle, then **Run > Run 'app'**.
 4. The first launch imports 24 exercises from `app/src/main/assets/exercises.json` and shows them in the **Exercises** catalogue. The import does not overwrite existing entries.
 
-> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 24 JUnit tests passed, and all 3 Espresso tests passed on the API 37 emulator.
+> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 31 JUnit tests passed, and all 4 Espresso tests passed on the API 37 emulator.
 
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md) for the diagram and Room relationships.
 
 - `core/data/entities` — `ExerciseEntity`, `WorkoutEntity`, `WorkoutEntryEntity`.
+- `core/data/models` — joined read models such as `LoggedWorkoutEntry`.
 - `core/data/dao` — Room DAO interfaces.
 - `core/data/repositories` — repository boundaries.
 - `core/preferences` — DataStore API for theme, weight unit, default sort.
@@ -39,8 +40,8 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 2. Add/edit exercise — implemented by Developer 1: validation, Room persistence, loading/error states, and draft restoration.
 3. Workout history — implemented by Developer 2: search, status and date filters, live counts, and empty/no-match states.
 4. Add/edit workout — implemented by Developer 2: validation, date picker, completion status, notes, deletion, and draft restoration.
-5. Workout details/logging — TODO developer 3.
-6. Progress dashboard — TODO developer 3.
+5. Workout details/logging — implemented by Developer 3: exercise selection, type-aware entry CRUD, validation, unit conversion, and restored drafts.
+6. Progress dashboard — implemented by Developer 3: completed-workout totals, recent strength-volume chart, and personal records.
 7. Settings — TODO developer 4.
 
 Navigation uses a four-tab `BottomNavigationView` and three child destinations.
@@ -54,7 +55,8 @@ The app uses a shared **Material 3** theme with emerald accents, warm neutral su
 - Add/Edit Exercise groups fields into basics, tracking, and coaching notes, with inline validation and automatic scrolling to the first invalid field.
 - Workout history uses the same hero, search field, and card styling, with filter chips, **Completed**/**Planned** status badges, a notes preview, and an edit action on each card.
 - Add/Edit Workout follows the exercise form layout: session basics, status, and notes cards with inline validation and a confirmed delete action.
-- Unfinished features are clearly marked **Coming soon**, with a working shortcut to the exercise library.
+- Workout details use the same cards and typography, with a type-aware Material entry dialog for strength and duration exercises.
+- Progress presents completed-workout totals, recent strength volume, and personal records in the selected weight unit.
 - The shared shell handles system-bar, display-cutout, and keyboard insets. The launcher icon matches the in-app branding.
 
 Shared styles live in [themes.xml](app/src/main/res/values/themes.xml), with palette tokens in [colors.xml](app/src/main/res/values/colors.xml) and [night colors](app/src/main/res/values-night/colors.xml). The UI remains XML Views with view binding.
@@ -127,13 +129,47 @@ Like the exercise form, the workout form keeps its draft across rotation and pro
 - [WorkoutDates / WorkoutHistoryFilter](app/src/main/java/com/fitjournal/app/core/domain/WorkoutDates.kt) — date conversion and filter date windows.
 - [WorkoutDao](app/src/main/java/com/fitjournal/app/core/data/dao/WorkoutDao.kt) / [WorkoutRepository](app/src/main/java/com/fitjournal/app/core/data/repositories/WorkoutRepository.kt) — filtered history query, lookup by ID, and count. The `workouts` table schema and navigation IDs are unchanged; the `workoutFormFragment` destination gained an optional `workoutId` argument.
 
+## Workout logging and statistics — Developer 3
+
+Branch: `feature/workout-entries`.
+
+### Log workout exercises
+
+1. Tap a workout card in **Workouts** to open its details.
+2. Tap **Add exercise to workout** and choose an exercise from the existing catalogue.
+3. For a `REPS_WEIGHT` exercise, enter positive sets, repetitions, and weight. For a `DURATION` exercise, enter a positive duration in seconds.
+4. Save the entry. Use **Edit** to change its applicable metrics or **Delete** and confirm to remove it.
+
+The entry editor uses `WorkoutDetailsViewModel` and `SavedStateHandle`, so the selected exercise and unsaved values survive activity recreation. Saving and deleting are guarded against repeated taps; validation stays inline, and a failed save keeps the draft open for retry. Room joins entries to exercises for live names and measurement types instead of performing one lookup per row.
+
+Weights are always stored canonically in **kilograms**. The entry editor, saved-entry rows, dashboard totals, recent-volume chart, and strength records react to `SettingsRepository.weightUnit`: pounds are converted at the UI boundary and converted back to kilograms before persistence. Timed entries never contribute to strength volume.
+
+### Progress rules
+
+The dashboard intentionally includes **completed workouts only**. This rule is applied consistently to the completed-workout count, total training volume, recent chart, and personal records.
+
+- Training volume: `sets × repetitions × weightKg`, summed only for strength entries.
+- Strength personal record: highest logged weight for that exercise.
+- Duration personal record: longest logged duration for that exercise.
+- Recent chart: strength volume for the last seven completed workouts, displayed oldest to newest; workouts without strength volume are omitted from the bars.
+
+### Implementation
+
+- [WorkoutDetailsFragment](app/src/main/java/com/fitjournal/app/features/entries/WorkoutDetailsFragment.kt) / [WorkoutDetailsViewModel](app/src/main/java/com/fitjournal/app/features/entries/WorkoutDetailsViewModel.kt) — live workout contents, restored entry drafts, type-aware validation, and entry CRUD.
+- [ProgressFragment](app/src/main/java/com/fitjournal/app/features/progress/ProgressFragment.kt) / [ProgressViewModel](app/src/main/java/com/fitjournal/app/features/progress/ProgressViewModel.kt) — completed-only totals, chart points, records, loading, and retry states.
+- [WorkoutEntryDao](app/src/main/java/com/fitjournal/app/core/data/dao/WorkoutEntryDao.kt) / [WorkoutEntryRepository](app/src/main/java/com/fitjournal/app/core/data/repositories/WorkoutEntryRepository.kt) — live joined entry projections and persistence operations.
+- [WorkoutEntryValidator / ProgressCalculator](app/src/main/java/com/fitjournal/app/core/domain/Validators.kt) — entry validation, volume, duration exclusion, and record calculations.
+- [WeightUnits](app/src/main/java/com/fitjournal/app/core/domain/WeightUnits.kt) — canonical kg/lb conversion shared with the saved weight-unit preference.
+
+Developer 3 required no database schema change or migration.
+
 ## Deliverables / tracking
 
 See [docs/team-plan.md](docs/team-plan.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/debugging-log.md](docs/debugging-log.md).
 
 ## Tests
 
-From an Android Studio terminal after generating the wrapper:
+From an Android Studio terminal:
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -142,17 +178,18 @@ From an Android Studio terminal after generating the wrapper:
 
 On Windows PowerShell, use `.\gradlew.bat` in place of `./gradlew`.
 
-The current suite contains **24 JUnit tests** and **3 Espresso tests**:
+The current suite contains **31 JUnit tests** and **4 Espresso tests**:
 
 - [ExerciseFormViewModelTest](app/src/test/java/com/fitjournal/app/ExerciseFormViewModelTest.kt): 8 tests covering validation boundaries, supported tracking types, invalid submissions, trimmed creation, repeated save taps, editing without changing identity, restored drafts, save retry, and missing records.
 - [WorkoutFormViewModelTest](app/src/test/java/com/fitjournal/app/WorkoutFormViewModelTest.kt): 8 tests covering the default date, invalid titles, trimmed creation stored at the local start of day, repeated save taps, completed-in-future rejection, editing the same record, restored drafts, save retry, deletion, and missing records.
 - [WorkoutHistoryTest](app/src/test/java/com/fitjournal/app/WorkoutHistoryTest.kt): 5 tests covering workout validation boundaries, date round-trips (including a daylight-saving day), filter date windows, combined search/status/period filtering with ordering and filter restoration, and empty versus no-match states. Uses the in-memory [MemoryWorkoutDao](app/src/test/java/com/fitjournal/app/MemoryWorkoutDao.kt).
-- [ValidatorsTest](app/src/test/java/com/fitjournal/app/ValidatorsTest.kt): 3 existing exercise/workout validation and volume calculation tests.
+- [ValidatorsTest](app/src/test/java/com/fitjournal/app/ValidatorsTest.kt): 10 tests covering exercise/workout validation, strength and duration entry validation, volume calculation and duration exclusion, strength/duration personal records, invalid record metrics, and kg/lb round trips.
 - [ExerciseFormTest](app/src/androidTest/java/com/fitjournal/app/ExerciseFormTest.kt): creates an exercise, verifies draft restoration after activity recreation, finds it in the catalogue, edits it, and verifies its ID and code are preserved. It removes only the records it creates.
 - [WorkoutFormTest](app/src/androidTest/java/com/fitjournal/app/WorkoutFormTest.kt): creates a completed workout, verifies draft restoration after activity recreation, finds it with the Completed and Last 7 days filters, checks that the Planned filter hides it, edits it while preserving its ID, and deletes it through the confirmation dialog. It removes only the records it creates.
+- [WorkoutEntryTest](app/src/androidTest/java/com/fitjournal/app/WorkoutEntryTest.kt): opens a workout, selects a catalogue exercise, restores an unsaved entry across activity recreation, creates and edits the strength entry, then confirms deletion. It verifies Room values and removes only its own records.
 - [MainActivityTest](app/src/androidTest/java/com/fitjournal/app/MainActivityTest.kt): existing catalogue visibility smoke test.
 
-All 24 JUnit tests and all 3 Espresso tests passed during verification. The team still needs tests for the remaining modules and 2 documented real debugging cases.
+All 31 JUnit tests and all 4 Espresso tests passed during verification. Tests for the remaining Developer 1 and Developer 4 work should be added with those modules; the team also still needs 2 documented real debugging cases.
 
 ## GitHub
 
