@@ -48,9 +48,9 @@ class ProgressFragment : Fragment() {
                     val records: List<Pair<String, String>> = entries.groupBy { it.exerciseId }.mapNotNull { (id, logged) ->
                         val exercise = exercises.firstOrNull { exercise -> exercise.id == id } ?: return@mapNotNull null
                         val value = if (exercise.measurementType == "DURATION") {
-                            (logged.maxOfOrNull { it.durationSeconds } ?: 0L).toString() + " sec"
+                            (ProgressCalculator.personalRecord(logged.map { it.durationSeconds.toDouble() }) ?: 0.0).toLong().toString() + " sec"
                         } else {
-                            String.format(Locale.getDefault(), "%.1f kg", logged.maxOfOrNull { it.weightKg } ?: 0.0)
+                            String.format(Locale.getDefault(), "%.1f kg", ProgressCalculator.personalRecord(logged.map { it.weightKg }) ?: 0.0)
                         }
                         exercise.name to value
                     }

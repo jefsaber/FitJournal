@@ -71,4 +71,8 @@ object ProgressCalculator {
         require(sets >= 0 && repetitions >= 0 && weightKg >= 0)
         return sets * repetitions * weightKg
     }
+
+    /** Highest logged weight for strength entries or longest duration for timed entries. */
+    fun personalRecord(values: List<Double>): Double? =
+        values.filter { it.isFinite() && it >= 0.0 }.maxOrNull()
 }
