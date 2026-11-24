@@ -64,6 +64,11 @@
     <string name="explore_exercises">Explore exercises</string>
     <string name="progress_screen_title">See how far you go.</string>
     <string name="progress_screen_description">Your training volume, personal bests, and progress will come together here. Progress tracking is being built.</string>
+    <string name="progress_completed_note">Statistics include completed workouts only.</string>
+    <string name="progress_workouts_label">Completed workouts</string>
+    <string name="progress_volume_label">Strength training volume</string>
+    <string name="progress_records_title">Personal records</string>
+    <string name="progress_empty">Complete and log workouts to build your personal records.</string>
     <string name="settings_screen_title">Make it your own.</string>
     <string name="settings_screen_description">Theme, weight units, and sorting preferences will live here. Personalization controls are coming soon.</string>
     <string name="workout_edit">Edit workout</string>
