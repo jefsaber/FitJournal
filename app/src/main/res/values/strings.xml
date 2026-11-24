@@ -133,4 +133,6 @@
     <string name="workout_entry_duration">Duration (seconds)</string>
     <string name="workout_entry_invalid">Enter valid values greater than zero for each field.</string>
     <string name="workout_entry_save">Save entry</string>
+    <string name="workout_entry_no_exercises">Add an exercise to your library before logging it.</string>
+    <string name="workout_entry_save_error">Could not save this entry. Please try again.</string>
 </resources>
