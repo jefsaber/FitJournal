@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/canvas" android:fillViewport="true" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="20dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/settings_eyebrow" android:textAppearance="@style/TextAppearance.FitJournal.Eyebrow" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:text="@string/settings_screen_title"
+            android:textAppearance="@style/TextAppearance.FitJournal.Title" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:layout_marginBottom="24dp"
+            android:text="@string/settings_screen_description" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+        <ProgressBar android:id="@+id/settings_progress"
+            android:layout_width="32dp" android:layout_height="32dp" android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" android:contentDescription="@string/settings_loading" />
+        <TextView android:id="@+id/settings_error"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" android:padding="16dp"
+            android:background="@color/error_container" android:accessibilityLiveRegion="polite"
+            android:text="@string/settings_save_error"
+            android:textAppearance="@style/TextAppearance.FitJournal.Body"
+            android:textColor="@color/error" android:visibility="gone" />
+
+        <LinearLayout android:id="@+id/settings_content"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:visibility="gone">
+
+            <!-- Appearance -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+                app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="20dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/settings_theme_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                        android:text="@string/settings_theme_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                    <com.google.android.material.button.MaterialButtonToggleGroup android:id="@+id/theme_toggle"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        app:singleSelection="true" app:selectionRequired="true">
+                        <com.google.android.material.button.MaterialButton android:id="@+id/theme_system"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_theme_system" android:textAllCaps="false" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/theme_light"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_theme_light" android:textAllCaps="false" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/theme_dark"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_theme_dark" android:textAllCaps="false" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Weight unit -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+                app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="20dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/settings_unit_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                        android:text="@string/settings_unit_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                    <com.google.android.material.button.MaterialButtonToggleGroup android:id="@+id/unit_toggle"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        app:singleSelection="true" app:selectionRequired="true">
+                        <com.google.android.material.button.MaterialButton android:id="@+id/unit_kg"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_unit_kg" android:textAllCaps="false" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/unit_lb"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_unit_lb" android:textAllCaps="false" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Default exercise sorting -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/surface" app:cardCornerRadius="22dp"
+                app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/outline">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="20dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/settings_sort_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp" android:layout_marginBottom="16dp"
+                        android:text="@string/settings_sort_caption" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+                    <com.google.android.material.button.MaterialButtonToggleGroup android:id="@+id/sort_toggle"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        app:singleSelection="true" app:selectionRequired="true">
+                        <com.google.android.material.button.MaterialButton android:id="@+id/sort_name_asc"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_sort_name_asc" android:textAllCaps="false" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/sort_name_desc"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1"
+                            android:text="@string/settings_sort_name_desc" android:textAllCaps="false" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
