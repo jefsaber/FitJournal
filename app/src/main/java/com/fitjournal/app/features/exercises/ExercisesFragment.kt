@@ -26,8 +26,8 @@ class ExercisesFragment : Fragment() {
     private var _binding: FragmentExercisesBinding? = null
     private val binding get() = requireNotNull(_binding)
     private val model by viewModels<ExerciseListViewModel> {
-        val repo = (requireActivity().application as FitJournalApplication).container.exercises
-        ExerciseListViewModel.Factory(repo)
+        val container = (requireActivity().application as FitJournalApplication).container
+        ExerciseListViewModel.Factory(container.exercises, container.settings)
     }
     override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, saved: Bundle?): View {
         _binding = FragmentExercisesBinding.inflate(inflater, parent, false)
