@@ -4,7 +4,7 @@
 
 Deadline: **26 November 2026** · Group: **4 developers**
 
-> **Status: exercise Add/Edit, workout management, workout logging, and progress statistics implemented**. Users can create workouts, log strength or timed exercises, edit/delete entries, and review completed-workout volume, a recent-volume chart, and personal records. Catalogue filter/sort controls and the Settings UI remain to be completed.
+> **Status: exercise Add/Edit, workout management, workout logging, and progress statistics implemented**. Users can create workouts, log strength or timed exercises, edit/delete entries, and review completed-workout volume, a recent-volume chart, and personal records. Settings persist the theme, weight unit, and default exercise order. Catalogue category-filter and in-screen sort controls remain with Developer 1.
 
 ## Requirements / setup
 
@@ -20,7 +20,7 @@ Deadline: **26 November 2026** · Group: **4 developers**
 3. Sync Gradle, then **Run > Run 'app'**.
 4. The first launch imports 24 exercises from `app/src/main/assets/exercises.json` and shows them in the **Exercises** catalogue. The import does not overwrite existing entries.
 
-> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 31 JUnit tests passed, and all 4 Espresso tests passed on the API 37 emulator.
+> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 42 JUnit tests passed, and all 6 Espresso tests passed on the API 37 emulator.
 
 ## Architecture
 
@@ -36,19 +36,19 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 
 ## Current screens (7 navigation destinations)
 
-1. Exercise catalogue — initial Paging 3 list + search (scaffold).
+1. Exercise catalogue — Paging 3 list + search, ordered by the saved default sort.
 2. Add/edit exercise — implemented by Developer 1: validation, Room persistence, loading/error states, and draft restoration.
 3. Workout history — implemented by Developer 2: search, status and date filters, live counts, and empty/no-match states.
 4. Add/edit workout — implemented by Developer 2: validation, date picker, completion status, notes, deletion, and draft restoration.
 5. Workout details/logging — implemented by Developer 3: exercise selection, type-aware entry CRUD, validation, unit conversion, and restored drafts.
 6. Progress dashboard — implemented by Developer 3: completed-workout totals, recent strength-volume chart, and personal records.
-7. Settings — TODO developer 4.
+7. Settings — implemented by Developer 4: theme, weight unit, and default exercise order.
 
 Navigation uses a four-tab `BottomNavigationView` and three child destinations.
 
 ## App design
 
-The app uses a shared **Material 3** theme with emerald accents, warm neutral surfaces, rounded cards, consistent typography, and custom vector icons. Light and dark palettes follow the device theme automatically; an in-app theme preference control is still pending.
+The app uses a shared **Material 3** theme with emerald accents, warm neutral surfaces, rounded cards, consistent typography, and custom vector icons. Light and dark palettes follow the device theme by default; **Settings > Appearance** can force light or dark, or return to the device theme.
 
 - The branded app bar provides a back button on detail/form screens. Bottom navigation appears on the four main screens and hides while the keyboard is open.
 - The exercise catalogue includes a collapsing feature banner, search with a clear action, a live library count, tracking-type labels, and styled loading, empty, and retry states.
@@ -163,6 +163,44 @@ The dashboard intentionally includes **completed workouts only**. This rule is a
 
 Developer 3 required no database schema change or migration.
 
+## Settings and integration — Developer 4
+
+Branch: `feature/app-settings`.
+
+### Preferences
+
+| Preference | Control | Stored value | Affects |
+| --- | --- | --- | --- |
+| Appearance | Device / Light / Dark | `dark_mode` Boolean; removed for **Device** | Whole app, applied before the first screen and on every change |
+| Weight unit | Kilograms / Pounds | `weight_unit` = `kg` or `lb` | Entry editor, logged entries, Progress totals, chart, and records |
+| Exercise library order | Name A–Z / Name Z–A | `exercise_sort` = `NAME_ASC` or `NAME_DESC` | Exercise catalogue order |
+
+All three are stored in Preferences DataStore and survive restarting the app. The JSON import marker is internal and not a user-facing preference.
+
+### Demonstrate
+
+1. Open **Settings** and choose **Pounds (lb)**. Open **Progress**: totals and records now read `lb`. Logged weights in workout details also show pounds, while Room still stores kilograms.
+2. Choose **Name Z–A**, then open **Exercises**: the catalogue re-sorts immediately.
+3. Choose **Dark** or **Light**: the app switches theme immediately and keeps it after a restart. **Device** goes back to following the system setting.
+4. Force-stop and relaunch the app: all three choices are still selected and applied.
+
+### Design decisions
+
+- **Theme and the device setting.** The stored preference is still a Boolean, but it is absent until the user picks Light or Dark, so a fresh install keeps the original follow-the-device behavior. `FitJournalApplication` reads it once before the first activity starts, so the app does not flash the wrong theme, then applies later changes through `AppCompatDelegate.setDefaultNightMode`.
+- **Drafts across theme changes.** A theme change recreates the activity. Every form keeps its draft in `SavedStateHandle`. In-app theme changes happen from Settings, a top-level tab, and the bottom navigation is hidden on form screens. A theme change that reaches an open form is therefore a device theme change, which is a normal recreation covered by the form tests' `scenario.recreate()` checks.
+- **Validation.** Setters reject unsupported values with `IllegalArgumentException`. Unknown or unreadable stored values fall back to defaults instead of crashing.
+- **Weights.** `WeightConverter` uses the international pound (0.45359237 kg). Conversion happens only at UI boundaries; `weightKg` in Room is always kilograms.
+- **Catalogue sort.** `ExerciseListViewModel` combines the search text with the saved sort and re-queries the existing `ExerciseDao.page` query. Developer 1 can add in-screen sort/filter controls on top of this default.
+
+### Implementation
+
+- [SettingsFragment](app/src/main/java/com/fitjournal/app/features/settings/SettingsFragment.kt) / [SettingsViewModel](app/src/main/java/com/fitjournal/app/features/settings/SettingsViewModel.kt): toggle groups that reflect saved state, plus loading and save-error states.
+- [SettingsRepository](app/src/main/java/com/fitjournal/app/core/preferences/SettingsRepository.kt): validated setters, defaults, and an injectable `DataStore` for tests.
+- [ThemePreference](app/src/main/java/com/fitjournal/app/core/preferences/ThemePreference.kt) / [FitJournalApplication](app/src/main/java/com/fitjournal/app/FitJournalApplication.kt): maps the preference to night modes and applies it at startup and on change.
+- [ExerciseListViewModel](app/src/main/java/com/fitjournal/app/features/exercises/ExerciseListViewModel.kt): connects the saved sort to the catalogue.
+
+No database schema change or migration was required. The unused `PlaceholderFragment` was removed now that every screen is implemented.
+
 ## Deliverables / tracking
 
 See [docs/team-plan.md](docs/team-plan.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/debugging-log.md](docs/debugging-log.md).
@@ -178,18 +216,22 @@ From an Android Studio terminal:
 
 On Windows PowerShell, use `.\gradlew.bat` in place of `./gradlew`.
 
-The current suite contains **31 JUnit tests** and **4 Espresso tests**:
+The current suite contains **42 JUnit tests** and **6 Espresso tests**:
 
 - [ExerciseFormViewModelTest](app/src/test/java/com/fitjournal/app/ExerciseFormViewModelTest.kt): 8 tests covering validation boundaries, supported tracking types, invalid submissions, trimmed creation, repeated save taps, editing without changing identity, restored drafts, save retry, and missing records.
 - [WorkoutFormViewModelTest](app/src/test/java/com/fitjournal/app/WorkoutFormViewModelTest.kt): 8 tests covering the default date, invalid titles, trimmed creation stored at the local start of day, repeated save taps, completed-in-future rejection, editing the same record, restored drafts, save retry, deletion, and missing records.
 - [WorkoutHistoryTest](app/src/test/java/com/fitjournal/app/WorkoutHistoryTest.kt): 5 tests covering workout validation boundaries, date round-trips (including a daylight-saving day), filter date windows, combined search/status/period filtering with ordering and filter restoration, and empty versus no-match states. Uses the in-memory [MemoryWorkoutDao](app/src/test/java/com/fitjournal/app/MemoryWorkoutDao.kt).
 - [ValidatorsTest](app/src/test/java/com/fitjournal/app/ValidatorsTest.kt): 10 tests covering exercise/workout validation, strength and duration entry validation, volume calculation and duration exclusion, strength/duration personal records, invalid record metrics, and kg/lb round trips.
+- [SettingsRepositoryTest](app/src/test/java/com/fitjournal/app/SettingsRepositoryTest.kt): 5 tests covering defaults, rejection of unsupported values, persistence across DataStore instances, returning to the device theme, and fallback for unknown stored values.
+- [WeightConverterTest](app/src/test/java/com/fitjournal/app/WeightConverterTest.kt): 4 tests covering kilogram identity, the international pound factor, kg→lb→kg and lb→kg→lb round trips, and unit-code parsing.
+- [ThemePreferenceTest](app/src/test/java/com/fitjournal/app/ThemePreferenceTest.kt): 2 tests covering the night-mode mapping and theme-choice round trips.
 - [ExerciseFormTest](app/src/androidTest/java/com/fitjournal/app/ExerciseFormTest.kt): creates an exercise, verifies draft restoration after activity recreation, finds it in the catalogue, edits it, and verifies its ID and code are preserved. It removes only the records it creates.
 - [WorkoutFormTest](app/src/androidTest/java/com/fitjournal/app/WorkoutFormTest.kt): creates a completed workout, verifies draft restoration after activity recreation, finds it with the Completed and Last 7 days filters, checks that the Planned filter hides it, edits it while preserving its ID, and deletes it through the confirmation dialog. It removes only the records it creates.
 - [WorkoutEntryTest](app/src/androidTest/java/com/fitjournal/app/WorkoutEntryTest.kt): opens a workout, selects a catalogue exercise, restores an unsaved entry across activity recreation, creates and edits the strength entry, then confirms deletion. It verifies Room values and removes only its own records.
+- [SettingsTest](app/src/androidTest/java/com/fitjournal/app/SettingsTest.kt): selects pounds and Z–A, checks the choices survive activity recreation, shows `lb` on Progress, and re-sorts the catalogue both ways. A second test switches Dark → Light → Device and checks the recreated activity's night configuration. Previous preferences are restored afterwards.
 - [MainActivityTest](app/src/androidTest/java/com/fitjournal/app/MainActivityTest.kt): existing catalogue visibility smoke test.
 
-All 31 JUnit tests and all 4 Espresso tests passed during verification. Tests for the remaining Developer 1 and Developer 4 work should be added with those modules; the team also still needs 2 documented real debugging cases.
+All 42 JUnit tests and all 6 Espresso tests passed during verification. Developer 1's catalogue filter/sort controls and JSON duplicate-prevention tests are still to come, and the team still needs 2 documented real debugging cases.
 
 ## GitHub
 
