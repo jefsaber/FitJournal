@@ -12,6 +12,8 @@ flowchart TD
   P --> DS[(Preferences DataStore)]
   IMP[JSON importer] --> DAO
   IMP --> DS
+  APP[FitJournalApplication] --> P
+  APP --> NM[AppCompatDelegate night mode]
 ```
 
 ```mermaid
@@ -31,3 +33,6 @@ erDiagram
 - Workout-entry drafts are stored in `SavedStateHandle`; weights cross the UI boundary in the selected unit but persist as kilograms.
 - Progress combines live workout and joined-entry Flows. Counts, volume, charts, and personal records include completed workouts only.
 - Strength volume is `sets × repetitions × weightKg`; duration entries are excluded. Personal records use maximum weight for strength and longest duration for timed exercises.
+- Preferences: `dark_mode` (Boolean, absent = follow the device), `weight_unit` (`kg`/`lb`), and `exercise_sort` (`NAME_ASC`/`NAME_DESC`) live in Preferences DataStore. Setters validate values; unknown stored values fall back to defaults.
+- `FitJournalApplication` reads the theme once before the first activity is created, then collects later changes and applies them with `AppCompatDelegate.setDefaultNightMode`. Activities recreate, and drafts survive through `SavedStateHandle`.
+- The exercise catalogue combines its search text with the saved `exercise_sort` and re-queries the paged DAO whenever either changes.
