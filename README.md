@@ -4,7 +4,7 @@
 
 Deadline: **26 November 2026** · Group: **4 developers**
 
-> **Status: exercise Add/Edit, workout management, workout logging, and progress statistics implemented**. Users can create workouts, log strength or timed exercises, edit/delete entries, and review completed-workout volume, a recent-volume chart, and personal records. Settings persist the theme, weight unit, and default exercise order. Catalogue category-filter and in-screen sort controls remain with Developer 1.
+> **Status: exercise Add/Edit, workout management, workout logging, and progress statistics implemented**. Users can create workouts, log strength or timed exercises, edit/delete entries, and review completed-workout volume, a recent-volume chart, and personal records. Settings persist the theme, weight unit, and default exercise order. The catalogue now combines search, muscle-group filtering, and an in-screen sort control synchronized with Settings.
 
 ## Requirements / setup
 
@@ -20,7 +20,7 @@ Deadline: **26 November 2026** · Group: **4 developers**
 3. Sync Gradle, then **Run > Run 'app'**.
 4. The first launch imports 24 exercises from `app/src/main/assets/exercises.json` and shows them in the **Exercises** catalogue. The import does not overwrite existing entries.
 
-> **Latest verification:** `:app:assembleDebug` succeeded with JVM 21, all 42 JUnit tests passed, and all 6 Espresso tests passed on the API 37 emulator.
+> **Verified 25 November 2026:** the JVM 21 debug build succeeded; **46 local JUnit tests** and **16 instrumentation tests** passed on the API 37 emulator. Instrumentation consists of **9 Espresso UI tests + 7 Room/import tests**, run in a separate validation installation.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ See [docs/architecture.md](docs/architecture.md) for the diagram and Room relati
 
 ## Current screens (7 navigation destinations)
 
-1. Exercise catalogue — Paging 3 list + search, ordered by the saved default sort.
+1. Exercise catalogue — Paging 3 list with search, live muscle-group filtering, and persistent A–Z/Z–A sorting.
 2. Add/edit exercise — implemented by Developer 1: validation, Room persistence, loading/error states, and draft restoration.
 3. Workout history — implemented by Developer 2: search, status and date filters, live counts, and empty/no-match states.
 4. Add/edit workout — implemented by Developer 2: validation, date picker, completion status, notes, deletion, and draft restoration.
@@ -58,6 +58,7 @@ The app uses a shared **Material 3** theme with emerald accents, warm neutral su
 - Workout details use the same cards and typography, with a type-aware Material entry dialog for strength and duration exercises.
 - Progress presents completed-workout totals, recent strength volume, and personal records in the selected weight unit.
 - The shared shell handles system-bar, display-cutout, and keyboard insets. The launcher icon matches the in-app branding.
+- Compact landscape catalogue/workout layouts keep controls and list rows on screen. The landscape toolbar is shorter and bottom navigation uses icons with accessible destination labels.
 
 Shared styles live in [themes.xml](app/src/main/res/values/themes.xml), with palette tokens in [colors.xml](app/src/main/res/values/colors.xml) and [night colors](app/src/main/res/values-night/colors.xml). The UI remains XML Views with view binding.
 
@@ -85,7 +86,15 @@ Editing preserves the exercise ID and unique `code`, including for seeded exerci
 - [ExerciseValidator](app/src/main/java/com/fitjournal/app/core/domain/Validators.kt) — validation shared by the form and unit tests.
 - [ExerciseRepository](app/src/main/java/com/fitjournal/app/core/data/repositories/ExerciseRepository.kt) — existing Room persistence boundary.
 
-**Remaining Developer 1 work:** expose category filtering and sorting in the catalogue and add dedicated JSON duplicate-prevention tests. The Add/Edit workflow is complete; the full exercise module still has these remaining tasks.
+### Catalogue filters, sorting, and seed safety
+
+- **Muscle group** lists categories from Room, with an **All groups** option. Category matching and category deduplication ignore case.
+- **Sort by** offers **Name A–Z** and **Name Z–A**. It updates the persistent Settings preference, so both screens stay synchronized after restart.
+- Search and category selection combine with the selected order and survive activity recreation through `SavedStateHandle`.
+- If saving the sort fails, the previous order stays active and an inline message offers retry by choosing an order again.
+- JSON import validates supported field types and the shared exercise rules, and requires at least **20 distinct valid codes** before insertion.
+- A single Room transaction inserts missing codes with conflict `IGNORE`; the DataStore marker skips later imports. Retrying after a missing marker preserves existing records, edited seeds, and user-created exercises.
+- Importer tests use an in-memory Room database and isolated preference files, including malformed rows, duplicate codes, missing-marker retry, and failed-import recovery.
 
 ## Workout management — Developer 2
 
@@ -190,7 +199,7 @@ All three are stored in Preferences DataStore and survive restarting the app. Th
 - **Drafts across theme changes.** A theme change recreates the activity. Every form keeps its draft in `SavedStateHandle`. In-app theme changes happen from Settings, a top-level tab, and the bottom navigation is hidden on form screens. A theme change that reaches an open form is therefore a device theme change, which is a normal recreation covered by the form tests' `scenario.recreate()` checks.
 - **Validation.** Setters reject unsupported values with `IllegalArgumentException`. Unknown or unreadable stored values fall back to defaults instead of crashing.
 - **Weights.** `WeightConverter` uses the international pound (0.45359237 kg). Conversion happens only at UI boundaries; `weightKg` in Room is always kilograms.
-- **Catalogue sort.** `ExerciseListViewModel` combines the search text with the saved sort and re-queries the existing `ExerciseDao.page` query. Developer 1 can add in-screen sort/filter controls on top of this default.
+- **Catalogue sort.** `ExerciseListViewModel` combines search, selected category, and the saved order for the existing paged DAO query. Changing the order in either the catalogue or Settings updates the same DataStore preference.
 
 ### Implementation
 
@@ -216,8 +225,9 @@ From an Android Studio terminal:
 
 On Windows PowerShell, use `.\gradlew.bat` in place of `./gradlew`.
 
-The current suite contains **42 JUnit tests** and **6 Espresso tests**:
+The current suite contains **46 local JUnit tests** and **16 instrumentation tests** (9 Espresso UI tests and 7 Room/import tests):
 
+- [ExerciseCatalogueViewModelTest](app/src/test/java/com/fitjournal/app/ExerciseCatalogueViewModelTest.kt): 4 tests covering combined query state, live/case-insensitive categories, saved-state restoration, and sort-write failure/retry.
 - [ExerciseFormViewModelTest](app/src/test/java/com/fitjournal/app/ExerciseFormViewModelTest.kt): 8 tests covering validation boundaries, supported tracking types, invalid submissions, trimmed creation, repeated save taps, editing without changing identity, restored drafts, save retry, and missing records.
 - [WorkoutFormViewModelTest](app/src/test/java/com/fitjournal/app/WorkoutFormViewModelTest.kt): 8 tests covering the default date, invalid titles, trimmed creation stored at the local start of day, repeated save taps, completed-in-future rejection, editing the same record, restored drafts, save retry, deletion, and missing records.
 - [WorkoutHistoryTest](app/src/test/java/com/fitjournal/app/WorkoutHistoryTest.kt): 5 tests covering workout validation boundaries, date round-trips (including a daylight-saving day), filter date windows, combined search/status/period filtering with ordering and filter restoration, and empty versus no-match states. Uses the in-memory [MemoryWorkoutDao](app/src/test/java/com/fitjournal/app/MemoryWorkoutDao.kt).
@@ -230,8 +240,40 @@ The current suite contains **42 JUnit tests** and **6 Espresso tests**:
 - [WorkoutEntryTest](app/src/androidTest/java/com/fitjournal/app/WorkoutEntryTest.kt): opens a workout, selects a catalogue exercise, restores an unsaved entry across activity recreation, creates and edits the strength entry, then confirms deletion. It verifies Room values and removes only its own records.
 - [SettingsTest](app/src/androidTest/java/com/fitjournal/app/SettingsTest.kt): selects pounds and Z–A, checks the choices survive activity recreation, shows `lb` on Progress, and re-sorts the catalogue both ways. A second test switches Dark → Light → Device and checks the recreated activity's night configuration. Previous preferences are restored afterwards.
 - [MainActivityTest](app/src/androidTest/java/com/fitjournal/app/MainActivityTest.kt): existing catalogue visibility smoke test.
+- [PresentationFlowTest](app/src/androidTest/java/com/fitjournal/app/PresentationFlowTest.kt): traverses all seven destinations, enters text through the actual keyboard in each form, recreates screens/drafts, creates a completed workout and entry through the UI, checks its record, switches to pounds, and relaunches while verifying that Room still stores 40 kg.
+- [LandscapeNavigationTest](app/src/androidTest/java/com/fitjournal/app/LandscapeNavigationTest.kt): performs a real landscape configuration change and verifies that search, filters, add actions, navigation, and list rows remain usable.
+- [ExerciseCatalogueTest](app/src/androidTest/java/com/fitjournal/app/ExerciseCatalogueTest.kt): combines search and category, changes the saved sort, restores controls after recreation, and verifies synchronization with Settings.
+- [DatabaseIntegrityTest](app/src/androidTest/java/com/fitjournal/app/DatabaseIntegrityTest.kt): 7 real Room/import tests covering one-time import, edited/user records during retry, malformed rows, unique-code minimum, invalid JSON recovery, cascading workout deletion, and combined paging query behavior.
 
-All 42 JUnit tests and all 6 Espresso tests passed during verification. Developer 1's catalogue filter/sort controls and JSON duplicate-prevention tests are still to come, and the team still needs 2 documented real debugging cases.
+All 46 local JUnit tests and all 16 instrumentation tests passed during verification. Two observed development incidents are recorded in [the debugging log](docs/debugging-log.md); the team must attach its actual author/PR references and any required debugger captures.
+
+### Isolated clean-install verification
+
+Use a separate debug application ID to preserve the normal app's workouts and preferences:
+
+```powershell
+.\gradlew.bat :app:assembleDebug :app:connectedDebugAndroidTest -Pfitjournal.isolatedValidation=true
+```
+
+This installs `com.fitjournal.app.validation`. Gradle instrumented runs use `animationsDisabled = true` to avoid transition-related input races. Tests create and clean their own records; Room/import integrity tests use entirely in-memory databases and temporary DataStores. Build normally afterwards to produce the standard `com.fitjournal.app` APK:
+
+```powershell
+.\gradlew.bat :app:assembleDebug
+```
+
+## Presentation demonstration
+
+1. In Settings, select **Kilograms**, **Name A–Z**, and the desired appearance.
+2. Create a strength exercise named **Presentation press**, category **Chest**. Find it using search and the muscle-group filter; demonstrate both sort directions.
+3. Create a workout named **Presentation session**, dated today and marked completed.
+4. Open that workout and log **3 sets × 8 repetitions × 40 kg** for Presentation press. This contributes **960 kg-reps** and a **40 kg** personal record.
+5. Add a timed exercise, for example Plank for **60 seconds**. Explain that it contributes a duration record and no strength volume.
+6. Open Progress and show completed-only totals, recent volume, and records.
+7. Switch to pounds in Settings and return to Progress/details. Explain that display units change while canonical kilograms remain in Room.
+8. Demonstrate rotation and back navigation, then restart the app and show that the records and preferences persist.
+9. Show the test results, [architecture diagram](docs/architecture.md), and [two real debugging cases](docs/debugging-log.md).
+
+Expected numeric values in this example describe a fresh demonstration dataset; other completed workouts also contribute to the overall totals.
 
 ## GitHub
 
@@ -243,4 +285,13 @@ All 42 JUnit tests and all 6 Espresso tests passed during verification. Develope
 
 ## Team contributions
 
-Before submission, list all four students, GitHub usernames, owned modules and significant PR URLs here.
+The technical ownership is listed below. Fill in the actual student identities and significant PR URLs before submission; these have not been supplied.
+
+| Role | Student name | GitHub username | Owned module | Significant PRs |
+| --- | --- | --- | --- | --- |
+| Developer 1 | Awaiting team | Awaiting team | Exercise catalogue, Add/Edit, filters, seed initialization | Awaiting team |
+| Developer 2 | Awaiting team | Awaiting team | Workout creation, editing, history, deletion | Awaiting team |
+| Developer 3 | Awaiting team | Awaiting team | Workout logging, volume, personal records, Progress | Awaiting team |
+| Developer 4 | Awaiting team | Awaiting team | Settings, theme/units/order integration, shared application infrastructure | Awaiting team |
+
+See [remaining-work.md](remaining-work.md) for the current completion record and the remaining presentation-only follow-up.

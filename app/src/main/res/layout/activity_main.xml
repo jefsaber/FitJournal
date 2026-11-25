@@ -5,7 +5,7 @@
     android:background="@color/canvas" android:orientation="vertical">
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/main_toolbar"
-        android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent" android:layout_height="@dimen/app_toolbar_height"
         android:background="@color/canvas"
         android:paddingStart="8dp" android:paddingEnd="12dp"
         app:contentInsetStartWithNavigation="8dp"
@@ -24,13 +24,14 @@
         app:defaultNavHost="true" app:navGraph="@navigation/nav_graph" />
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_width="match_parent" android:layout_height="@dimen/app_bottom_navigation_height"
+        android:minHeight="@dimen/app_bottom_navigation_height"
         android:background="@color/canvas"
         app:elevation="0dp"
         app:itemIconTint="@color/nav_item_tint"
         app:itemTextColor="@color/nav_item_tint"
         app:itemTextAppearanceActive="@style/TextAppearance.FitJournal.Nav"
         app:itemTextAppearanceInactive="@style/TextAppearance.FitJournal.Nav"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="@integer/navigation_label_mode"
         app:menu="@menu/bottom_nav" />
 </LinearLayout>

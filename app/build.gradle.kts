@@ -18,6 +18,13 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            // Use a separate install for clean-state checks without erasing personal workouts.
+            if (providers.gradleProperty("fitjournal.isolatedValidation").orNull == "true") {
+                applicationIdSuffix = ".validation"
+                versionNameSuffix = "-validation"
+            }
+        }
         release { isMinifyEnabled = false }
     }
     compileOptions {
@@ -25,7 +32,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures { viewBinding = true }
-    testOptions { unitTests.isReturnDefaultValues = true }
+    testOptions {
+        animationsDisabled = true
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 kotlin {

@@ -37,7 +37,7 @@
         <item quantity="other">%d exercises in your library</item>
     </plurals>
     <string name="no_exercises_title">No matching moves</string>
-    <string name="no_exercises_message">Try another search, or add an exercise of your own.</string>
+    <string name="no_exercises_message">Try another search or muscle group, or add an exercise of your own.</string>
     <string name="catalogue_error_title">Your library could not load</string>
     <string name="catalogue_error_message">Check back in a moment and try again.</string>
     <string name="exercise_strength_short">Reps + weight</string>
@@ -168,4 +168,8 @@
     <string name="workout_entry_delete_description">Delete %1$s entry</string>
     <string name="workout_entry_strength_value">%1$d sets · %2$d reps · %3$s %4$s</string>
     <string name="workout_entry_duration_value">Duration · %1$s</string>
+    <string name="exercise_category_filter">Muscle group</string>
+    <string name="exercise_category_all">All groups</string>
+    <string name="exercise_sort_filter">Sort by</string>
+    <string name="exercise_sort_save_error">Could not save this order. Your previous order is still active; choose an order to retry.</string>
 </resources>

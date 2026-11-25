@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/canvas">
+    <com.google.android.material.appbar.AppBarLayout android:id="@+id/catalogue_app_bar"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@color/canvas" app:elevation="0dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:baselineAligned="false"
+            android:layout_marginStart="20dp" android:layout_marginEnd="20dp" android:layout_marginTop="8dp">
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.5"
+                android:layout_marginEnd="12dp" android:hint="@string/search_exercises"
+                app:endIconMode="clear_text" app:startIconDrawable="@drawable/ic_search">
+                <com.google.android.material.textfield.TextInputEditText android:id="@+id/search_input"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="text" android:imeOptions="actionSearch" android:singleLine="true" android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginEnd="12dp" android:hint="@string/exercise_category_filter">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/category_filter"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="none" android:saveEnabled="false" android:textSize="12sp" android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout android:id="@+id/catalogue_sort_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:hint="@string/exercise_sort_filter">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/catalogue_sort"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="none" android:saveEnabled="false" android:textSize="12sp" android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/catalogue_sort_error"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+            android:text="@string/exercise_sort_save_error" android:textColor="@color/error"
+            android:accessibilityLiveRegion="polite" android:visibility="gone" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingTop="8dp" android:paddingBottom="8dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/your_exercises" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+            <TextView android:id="@+id/exercise_count"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="16dp" android:layout_marginEnd="12dp"
+                android:textAppearance="@style/TextAppearance.FitJournal.Body" android:textSize="12sp" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/add_exercise_button"
+                android:layout_width="wrap_content" android:layout_height="48dp" android:minHeight="48dp"
+                android:text="@string/add_exercise" android:textSize="12sp" app:icon="@drawable/ic_add" app:iconSize="18dp" />
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/exercise_list"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="16dp" />
+        <LinearLayout android:id="@+id/empty_state"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="top" android:gravity="center" android:orientation="vertical"
+            android:padding="32dp" android:visibility="gone">
+            <ImageView android:layout_width="64dp" android:layout_height="64dp"
+                android:background="@drawable/bg_icon" android:padding="18dp"
+                android:importantForAccessibility="no" android:src="@drawable/ic_search" app:tint="@color/primary" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" android:gravity="center"
+                android:text="@string/no_exercises_title" android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:gravity="center"
+                android:text="@string/no_exercises_message" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+        </LinearLayout>
+        <ProgressBar android:id="@+id/catalogue_progress"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:layout_gravity="top|center_horizontal" android:layout_marginTop="32dp" android:visibility="gone" />
+        <LinearLayout android:id="@+id/catalogue_error"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_gravity="top" android:gravity="center" android:orientation="vertical"
+            android:padding="32dp" android:visibility="gone">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center" android:text="@string/catalogue_error_title"
+                android:textAppearance="@style/TextAppearance.FitJournal.Section" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:gravity="center"
+                android:text="@string/catalogue_error_message" android:textAppearance="@style/TextAppearance.FitJournal.Body" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/retry_catalogue_button"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" android:text="@string/exercise_retry" />
+        </LinearLayout>
+    </FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.mainToolbar.subtitle = if (resources.getBoolean(R.bool.compact_chrome)) null
+            else getString(R.string.brand_tagline)
         val host = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navigation = host.navController
         val mainDestinations = setOf(

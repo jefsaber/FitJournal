@@ -12,7 +12,7 @@ interface ExerciseDao {
 
     @Query("""SELECT * FROM exercises
         WHERE (:search = '' OR name LIKE '%' || :search || '%' OR category LIKE '%' || :search || '%')
-        AND (:category = 'ALL' OR category = :category)
+        AND (:category = 'ALL' OR category = :category COLLATE NOCASE)
         ORDER BY
           CASE WHEN :sort = 'NAME_ASC' THEN name END COLLATE NOCASE ASC,
           CASE WHEN :sort = 'NAME_DESC' THEN name END COLLATE NOCASE DESC,

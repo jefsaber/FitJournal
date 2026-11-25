@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="app_toolbar_height">48dp</dimen>
+    <dimen name="app_bottom_navigation_height">56dp</dimen>
+    <integer name="navigation_label_mode">2</integer>
+    <bool name="compact_chrome">true</bool>
+</resources>
