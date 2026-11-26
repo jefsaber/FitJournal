@@ -221,7 +221,7 @@ No database schema change or migration was required. The unused `PlaceholderFrag
 | Short project presentation | [PowerPoint deck (.pptx)](docs/FitJournal-Presentation.pptx), [browser version](docs/presentation.html), [20-minute schedule](docs/code-and-presentation-guide.md), and individual speaker notes |
 | Working application for the live demonstration | Run the `app` configuration in Android Studio; use the workflow below |
 
-Open `docs/FitJournal-Presentation.pptx` in PowerPoint for six editable slides with speaker notes. A browser version is also available at `docs/presentation.html`; its **Print / Save as PDF** control exports all six slides. The schedule is **6 minutes architecture, 8 minutes live demonstration, 6 minutes Q&A**.
+Open `docs/FitJournal-Presentation.pptx` in PowerPoint for five editable slides with speaker notes and no presentation timings. A browser version is also available at `docs/presentation.html`; its **Print / Save as PDF** control exports all six slides. The schedule is **6 minutes architecture, 8 minutes live demonstration, 6 minutes Q&A**.
 
 To produce the normal debug APK:
 
