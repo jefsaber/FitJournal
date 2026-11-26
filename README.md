@@ -210,9 +210,30 @@ All three are stored in Preferences DataStore and survive restarting the app. Th
 
 No database schema change or migration was required. The unused `PlaceholderFragment` was removed now that every screen is implemented.
 
-## Deliverables / tracking
+## Submission deliverables
 
-See [docs/team-plan.md](docs/team-plan.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/debugging-log.md](docs/debugging-log.md).
+| Required deliverable | Location |
+| --- | --- |
+| GitHub repository with the Android Studio project | [jefsaber/FitJournal](https://github.com/jefsaber/FitJournal) |
+| Complete README | This file: setup, architecture, features, validation, tests, team, and demonstration |
+| Simple architecture diagram | [Application flow and entity relationships](docs/architecture.md) |
+| JUnit and Espresso tests | [Local JUnit sources](app/src/test/java/com/fitjournal/app) and [instrumentation/Espresso sources](app/src/androidTest/java/com/fitjournal/app) |
+| Short project presentation | [PowerPoint deck (.pptx)](docs/FitJournal-Presentation.pptx), [browser version](docs/presentation.html), [20-minute schedule](docs/code-and-presentation-guide.md), and individual speaker notes |
+| Working application for the live demonstration | Run the `app` configuration in Android Studio; use the workflow below |
+
+Open `docs/FitJournal-Presentation.pptx` in PowerPoint for six editable slides with speaker notes. A browser version is also available at `docs/presentation.html`; its **Print / Save as PDF** control exports all six slides. The schedule is **6 minutes architecture, 8 minutes live demonstration, 6 minutes Q&A**.
+
+To produce the normal debug APK:
+
+```powershell
+.\gradlew.bat :app:assembleDebug
+```
+
+The standard generated location is `app/build/outputs/apk/debug/app-debug.apk`. Keep the normal app installed and rehearse on the same device/emulator used for the presentation.
+
+Before submitting, publish the final documentation/source changes, confirm the repository is accessible to the grader, and upload the exported presentation if the submission portal requests a separate slide file.
+
+Additional records: [team plan](docs/team-plan.md), [contribution workflow](CONTRIBUTING.md), and [debugging log](docs/debugging-log.md).
 
 ## Tests
 
@@ -277,21 +298,21 @@ Expected numeric values in this example describe a fresh demonstration dataset; 
 
 ## GitHub
 
-1. Create a GitHub repository `FitJournal` (or use the existing one).
-2. Push the starter to the repository's default branch following the steps in your ChatGPT reply.
-3. Give all four members **Write** access in GitHub Settings > Collaborators.
-4. Protect `main` through Settings > Branches / Rulesets and require Pull Request review.
-5. Each teammate creates their own `feature/...` branch.
+Repository: [https://github.com/jefsaber/FitJournal](https://github.com/jefsaber/FitJournal).
+
+Use the team's feature-branch and Pull Request workflow described in [CONTRIBUTING.md](CONTRIBUTING.md). Before submitting the URL, ensure the final source, README, diagrams, tests, and presentation are committed and pushed to the branch the grader will review. If the repository is private, grant the grader access.
 
 ## Team contributions
 
-The technical ownership is listed below. Fill in the actual student identities and significant PR URLs before submission; these have not been supplied.
+| Role | Student name | Module responsibility |
+| --- | --- | --- |
+| Developer 1 | Jef Saber | Exercise catalogue, Add/Edit, filters, seed initialization |
+| Developer 2 | Paul Tekle | Workout creation, editing, history, deletion |
+| Developer 3 | Anna Merheb | Workout logging, volume, personal records, Progress |
+| Developer 4 | David Sfeir | Settings, theme/units/order integration, shared application infrastructure |
 
-| Role | Student name | GitHub username | Owned module | Significant PRs |
-| --- | --- | --- | --- | --- |
-| Developer 1 | Awaiting team | Awaiting team | Exercise catalogue, Add/Edit, filters, seed initialization | Awaiting team |
-| Developer 2 | Awaiting team | Awaiting team | Workout creation, editing, history, deletion | Awaiting team |
-| Developer 3 | Awaiting team | Awaiting team | Workout logging, volume, personal records, Progress | Awaiting team |
-| Developer 4 | Awaiting team | Awaiting team | Settings, theme/units/order integration, shared application infrastructure | Awaiting team |
+Add individual GitHub profiles or significant PR links if required by the course.
+
+Read the [code and presentation guide](docs/code-and-presentation-guide.md) for a plain-language architecture walkthrough, files to study for each member, the 20-minute presentation plan (6 minutes architecture, 8 minutes live demonstration, 6 minutes Q&A), demonstration steps, and likely questions.
 
 See [remaining-work.md](remaining-work.md) for the current completion record and the remaining presentation-only follow-up.
